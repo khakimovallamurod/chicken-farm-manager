@@ -35,6 +35,7 @@
             <thead>
                 <tr>
                     <th>FIO</th>
+                    <th>Balans</th>
                     <th>Telafon raqam</th>
                     <th>Manzil</th>
                     <th>Ro'yxatdan o'tdi</th>
@@ -45,6 +46,7 @@
                 <?php foreach ($kataklar as $katak): ?>
                     <tr>
                         <td><?=$katak['mijoz_nomi']?></td>
+                        <td><?=$katak['balans']?></td>
                         <td><?=$katak['mijoz_tel']?></td>
                         <td><?=$katak['mijoz_address']?></td>
                         <td><?=$katak['created_at']?></td>                        

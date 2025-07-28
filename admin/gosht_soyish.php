@@ -381,13 +381,8 @@
         function viewDetails(rowId) {
             const modal = document.getElementById('historyModal');
             const historyContent = document.getElementById('historyContent');
-            
-            // Yuklash holatini ko'rsatish
             historyContent.innerHTML = '<div style="text-align: center; padding: 40px;">Yuklanmoqda...</div>';
-            
-            // Modalni ko'rsatish
             modal.style.display = 'flex';
-            
             // Ma'lumotlarni serverdan olish
             fetch('../api/get_gosht_mahsulotlar.php', {
                 method: 'POST',
@@ -419,8 +414,6 @@
                             <th>№</th>
                             <th>Mahsulot nomi</th>
                             <th>Miqdori</th>
-                            <th>Narxi (so'm)</th>
-                            <th>Jami (so'm)</th>
                             <th>Tavsif</th>
                         </tr>
                     `;
@@ -439,8 +432,6 @@
                             <td>${index + 1}</td>
                             <td>${product.mahsulot_nomi}</td>
                             <td>${product.soni}</td>
-                            <td>${parseFloat(product.narxi).toLocaleString()}</td>
-                            <td>${rowSum.toLocaleString()}</td>
                             <td>${product.tavsif || '-'}</td>
                         `;
                         tbody.appendChild(row);
@@ -451,7 +442,6 @@
                     footerRow.className = 'total-row';
                     footerRow.innerHTML = `
                         <td colspan="3"><strong>Jami:</strong></td>
-                        <td colspan="3"><strong>${totalSum.toLocaleString()} so'm</strong></td>
                     `;
                     tbody.appendChild(footerRow);
                     

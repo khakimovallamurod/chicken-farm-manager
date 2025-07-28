@@ -196,6 +196,12 @@ if (!isset($_SESSION['login'])) {
                     </button>
                 </li>
                 <li class="nav-item">
+                    <button class="nav-btn" onclick="showSection('pulberish')">
+                        <span class="nav-icon">🏦</span>
+                        Pul berish
+                    </button>
+                </li>
+                <li class="nav-item">
                     <button class="nav-btn" onclick="showSection('hisobot')">
                         <span class="nav-icon">📈</span>
                         Hisobotlar
@@ -297,219 +303,14 @@ if (!isset($_SESSION['login'])) {
             <?php include_once 'xarajatlar_qoshish.php'?>
 
             <!-- Sotuvlar -->
-            <section id="goshtsotish" class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">💰 Sotuvlar</h2>
-                </div>
-                
-                <form id="goshtSotishForm" onsubmit="addGoshtSotish(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Mijoz nomi:</label>
-                            <select id="sotish_mijoz" required>
-                                <option value="">Mijozni tanlang</option>
-                                <option value="1">Rustam Abdullayev</option>
-                                <option value="2">Dilshod Toshev</option>
-                                <option value="3">Anvar Karimov</option>
-                            </select>                                       
-                        </div>
-                        <div class="form-group">
-                            <label>Sotish sanasi:</label>
-                            <input type="date" id="sotish_sana" required>
-                        </div>                                                           
-                    </div>
-                    <div id="sotish-mahsulotlar-wrapper">
-                        <div class="product-row">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>Mahsulotni tanlang:</label>
-                                    <select name="kategoriya[]" required>
-                                        <option value="">Kategoriya tanlang</option>
-                                        <option value="tuxum">Tovuq mahsulotlari</option>
-                                        <option value="yem">Yem va ozuqa</option>
-                                        <option value="dori">Dori-darmon</option>
-                                        <option value="boshqa">Boshqa</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Miqdori (kg):</label>
-                                    <input type="number" name="miqdor[]" placeholder="Miqdori (kg)" required min="0" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label>Narxi (so'm):</label>
-                                    <input type="number" name="narx[]" placeholder="Narxi (so'm)" required min="0" step="1">
-                                </div>                               
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- ➕ Qo'shish tugmasi -->
-                    <button type="button" class="add-product-btn" id="addSotishProductBtn" onclick="addSotishMahsulotRow()">
-                        ➕ Mahsulot qo'shish
-                    </button>
-
-                    <div class="form-group">
-                        <label>Izoh:</label>
-                        <textarea id="sotish_izoh" rows="3" placeholder="Qo'shimcha ma'lumotlar..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success">💰 Sotishni ro'yxatga olish</button>
-                </form>
-
-                <div class="table-container">
-                    <h3>So'nggi sotishlar</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Sana</th>
-                                <th>Mijoz</th>
-                                <th>Miqdor (kg)</th>
-                                <th>Narxi</th>
-                                <th>Jami</th>
-                                <th>To'lov</th>
-                                <th>Holati</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024-01-22</td>
-                                <td>Rustam Abdullayev</td>
-                                <td>125.0</td>
-                                <td>35,000</td>
-                                <td>4,375,000</td>
-                                <td>Naqd</td>
-                                <td><span class="katak-status status-active">To'landi</span></td>
-                            </tr>
-                            <tr>
-                                <td>2024-01-20</td>
-                                <td>Nodir Karimov</td>
-                                <td>89.5</td>
-                                <td>34,500</td>
-                                <td>3,087,750</td>
-                                <td>Karta</td>
-                                <td><span class="katak-status status-active">To'landi</span></td>
-                            </tr>
-                            <tr>
-                                <td>2024-01-18</td>
-                                <td>Aziz Toshev</td>
-                                <td>200.0</td>
-                                <td>33,000</td>
-                                <td>6,600,000</td>
-                                <td>Qarz</td>
-                                <td><span class="katak-status status-maintenance">Qarzda</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            <?php include_once 'sotuvlar_qoshish.php'?>
 
             <!-- Pul olish -->
-            <section id="pulolish" class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">🏦 Mijozdan pul olish</h2>
-                </div>
-                
-                <form id="pulOlishForm" onsubmit="addPulOlish(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Mijozni tanlang:</label>
-                            <select id="pul_mijoz" required>
-                                <option value="">Mijozni tanlang</option>
-                                <option value="1">Aziz Toshev</option>
-                                <option value="2">Karim Nazarov</option>
-                                <option value="3">Dilshod Abdullayev</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Olingan miqdor (so'm):</label>
-                            <input type="number" id="pul_olingan" required min="0" step="0.01" placeholder="Masalan: 3000000">
-                        </div>
-                        <div class="form-group">
-                            <label>Olish sanasi:</label>
-                            <input type="date" id="pul_sana" required>
-                        </div>
-                        <div class="form-group">
-                            <label>To'lov usuli:</label>
-                            <select id="pul_tolov" required>
-                                <option value="">To'lov usulini tanlang</option>
-                                <option value="naqd">Naqd pul</option>
-                                <option value="plastik">Plastik karta</option>
-                                <option value="o'tkazma">Bank o'tkazmasi</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Izoh:</label>
-                        <textarea id="pul_izoh" rows="3" placeholder="Qo'shimcha ma'lumotlar..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">🏦 Pul olishni qayd qilish</button>
-                </form>
+            <?php include_once 'pul_olish_qoshish.php'?>
 
-                <div class="table-container">
-                    <h3>Qarzda mijozlar</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Mijoz</th>
-                                <th>Telefon</th>
-                                <th>Umumiy qarz</th>
-                                <th>To'langan</th>
-                                <th>Qolgan qarz</th>
-                                <th>So'nggi to'lov</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Aziz Toshev</td>
-                                <td>+998 90 123 45 67</td>
-                                <td>6,600,000</td>
-                                <td>3,000,000</td>
-                                <td style="color: #e74c3c; font-weight: bold;">3,600,000</td>
-                                <td>2024-01-20</td>
-                            </tr>
-                            <tr>
-                                <td>Karim Nazarov</td>
-                                <td>+998 91 234 56 78</td>
-                                <td>2,500,000</td>
-                                <td>1,000,000</td>
-                                <td style="color: #e74c3c; font-weight: bold;">1,500,000</td>
-                                <td>2024-01-15</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="table-container">
-                    <h3>So'nggi to'lovlar</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Sana</th>
-                                <th>Mijoz</th>
-                                <th>Miqdor</th>
-                                <th>To'lov usuli</th>
-                                <th>Qolgan qarz</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024-01-20</td>
-                                <td>Aziz Toshev</td>
-                                <td>3,000,000</td>
-                                <td>Bank o'tkazmasi</td>
-                                <td>3,600,000</td>
-                            </tr>
-                            <tr>
-                                <td>2024-01-15</td>
-                                <td>Karim Nazarov</td>
-                                <td>1,000,000</td>
-                                <td>Naqd pul</td>
-                                <td>1,500,000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
+            <!-- Pul berish -->
+            <?php include_once 'pul_berish_qoshish.php'?>
+            
             <!-- Hisobotlar -->
             <section id="hisobot" class="content-section">
                 <div class="section-header">
@@ -604,58 +405,6 @@ if (!isset($_SESSION['login'])) {
     <div id="alertContainer" style="position: fixed; top: 100px; right: 20px; z-index: 3000;"></div>
 
     <script src="../assets/js/dashboard_script.js"></script>
-    <script>
-        
-        function addSotishMahsulotRow() {
-            console.log('addSotishMahsulotRow chaqirildi'); // Debug uchun
-            
-            const wrapper = document.getElementById('sotish-mahsulotlar-wrapper');
-            const newRow = document.createElement('div');
-            newRow.className = 'product-row';
-            newRow.innerHTML = `
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Mahsulotni tanlang:</label>
-                        <select name="kategoriya[]" required>
-                            <option value="">Kategoriya tanlang</option>
-                            <option value="tuxum">Tovuq mahsulotlari</option>
-                            <option value="yem">Yem va ozuqa</option>
-                            <option value="dori">Dori-darmon</option>
-                            <option value="boshqa">Boshqa</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Miqdori (kg):</label>
-                        <input type="number" name="miqdor[]" placeholder="Miqdori (kg)" required min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Narxi (so'm):</label>
-                        <input type="number" name="narx[]" placeholder="Narxi (so'm)" required min="0" step="1">
-                    </div>
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button type="button" class="remove-btn" onclick="removeSotishMahsulot(this)" title="Mahsulotni olib tashlash">
-                            ❌
-                        </button>
-                    </div>
-                </div>
-            `;
-            wrapper.appendChild(newRow);
-        }
-        function removeSotishMahsulot(button) {
-            const productRow = button.closest('.product-row');
-            const wrapper = document.getElementById('sotish-mahsulotlar-wrapper');
-            
-            if (!productRow || !wrapper) {
-                console.error('Element topilmadi');
-                return;
-            }
-            if (wrapper.children.length > 1) {
-                productRow.remove();
-            } else {
-                alert('Kamida bitta mahsulot qatori bo\'lishi kerak!');
-            }
-        }           
-    </script>
+    
 </body>
 </html>
