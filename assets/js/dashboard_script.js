@@ -44,17 +44,6 @@ function contactSupplier(id) {
 function newOrder(id) {
     showAlert(`Ta'minotchi #${id}dan buyurtma berish oynasi ochilmoqda...`, 'success');
 }
-function addGoshtSotish(event) {
-    event.preventDefault();
-    showAlert('Go\'sht sotish muvaffaqiyatli qayd qilindi!');
-    document.getElementById('goshtSotishForm').reset();
-}
-
-function addPulOlish(event) {
-    event.preventDefault();
-    showAlert('Pul olish muvaffaqiyatli qayd qilindi!');
-    document.getElementById('pulOlishForm').reset();
-}
 
 function generateReport() {
     const reportType = document.getElementById('report_type').value;
