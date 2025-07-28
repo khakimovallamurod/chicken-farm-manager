@@ -83,7 +83,6 @@
         data: $('#regform').serialize(),
         success:function(data){
           let obj =jQuery.parseJSON(data);
-          console.log(data);
           if(obj.xatolik == 0){
             swal("Good job!", obj.xabar, "success");
             setTimeout(function() {
