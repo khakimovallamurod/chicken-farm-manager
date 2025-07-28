@@ -13,6 +13,7 @@ class Database{
         }
     }
     public function query($query) {
+        
         return mysqli_query($this->link, $query);
     }
     public function get_data_by_table($table, $arr, $con = 'no'){
@@ -35,6 +36,18 @@ class Database{
             $fetch = mysqli_fetch_assoc($this->query($sql));
             return $fetch;
         }
+    public function get_data_by_table_all($table, $con = 'no'){
+            $sql = "SELECT * FROM ".$table;
+            if ($con != 'no'){
+                $sql .= " ".$con;
+            }
+            $result = $this->query($sql);
+            $data = [];
+            while ($row = mysqli_fetch_assoc($result)) {
+                $data[] = $row;
+            }
+            return $data;
+        }
     public function insert($table, $arr){
             $sql = "INSERT INTO ".$table. " ";
             $t1 = '';
@@ -54,16 +67,42 @@ class Database{
             $sql .= "($t1) VALUES ($t2);";
             return $this -> query($sql);
         }
+    public function update($table, $arr, $con = 'no'){
+            $sql = "UPDATE ".$table. " SET ";
+            $t = '';
+            $i=0;
+            $n = count($arr);
+            foreach($arr as $key=>$val){
+                $i++;
+                if($i==$n){
+                    $t .= "$key = '$val'";
+                }else{
+                    $t .= "$key = '$val', ";
+                }
+            }
+            $sql .= $t;
+            if ($con != 'no'){
+                $sql .= " WHERE ".$con;
+            }
+            return $this -> query($sql);
+        }
+    public function delete($table, $con = 'no'){
+            $sql = "DELETE FROM ".$table;
+            if ($con != 'no'){
+                $sql .= " WHERE ".$con;
+            }
+            return $this -> query($sql);
+        }
     public function insert_table(){
-        // $query = "CREATE TABLE kataklar (
-        //     id INT AUTO_INCREMENT PRIMARY KEY,
-        //     nomi VARCHAR(100) NOT NULL,
-        //     izoh TEXT,
-        //     date DATE DEFAULT (CURRENT_DATE),
-        //     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        // );";
-        // $query = 
-        // return $this->query($query);
+        $query = "CREATE TABLE IF NOT EXISTS `yem_berish` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `katak_id` INT NOT NULL,
+            `mahsulot_id` INT NOT NULL,
+            `sana` DATE NOT NULL,
+            `miqdori` DECIMAL(10, 2) NOT NULL,
+            `izoh` TEXT
+        );";
+        return $this->query($query);
     }
 
 }
