@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Go'sht topshirish</title>
     <link rel="stylesheet" href="../assets/css/gosht_soyish_style.css">
-        
+   
 </head>
 <?php
     include_once '../config.php';
@@ -50,43 +50,60 @@
             </form>
         </div>
         <div class="table-container">
-            <h3>So'nggi topshirishlar</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Katak</th>
-                        <th>Jo'jalar soni</th>
-                        <th>Sana</th>
-                        <th>Izoh</th>
-                        <th>Ko'rish</th>
-                        <th>Qo'shish</th>
-                    </tr>
-                </thead>
-                <tbody id="goshtTopshirishTable">
-                    <?php foreach ($gosht_soyishlar as $soyish): 
-                        $katak_id = $soyish['katak_id'];
-                        $kataklar = $db->get_data_by_table('kataklar', ['id'=>$katak_id]);
-                        $katak_name = $kataklar['katak_nomi'];
+            <h3 class="table-title">
+                <i class="fas fa-list-alt me-2"></i>So'nggi topshirishlar
+            </h3>
+            <div class="table-responsive">
+                <table id="topshirishlarTable" class="table table-hover align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-home me-1"></i>Katak</th>
+                            <th><i class="fas fa-dove me-1"></i>Jo'jalar soni</th>
+                            <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
+                            <th><i class="fas fa-comment me-1"></i>Izoh</th>
+                            <th><i class="fas fa-eye me-1"></i>Ko'rish</th>
+                            <th><i class="fas fa-plus me-1"></i>Qo'shish</th>
+                        </tr>
+                    </thead>
+                    <tbody id="goshtTopshirishTable">
+                        <?php foreach ($gosht_soyishlar as $soyish): 
+                            $katak_id = $soyish['katak_id'];
+                            $kataklar = $db->get_data_by_table('kataklar', ['id' => $katak_id]);
+                            $katak_name = $kataklar['katak_nomi'];
                         ?>
                         <tr id="<?= $soyish['id'] ?>">
-                            <td><?= $katak_name ?></td>
-                            <td><?= $soyish['joja_soni'] ?></td>
-                            <td><?= $soyish['sana'] ?></td>
-                            <td><?= $soyish['izoh'] ?></td>
                             <td>
-                                <button class="icon-btn" onclick="viewDetails(<?= $soyish['id'] ?>)" title="Ko'rish">👁️</button>
+                                <span class="badge-katak">
+                                    <?= htmlspecialchars($katak_name) ?>
+                                </span>
                             </td>
                             <td>
-                                <button class="icon-btn" onclick="showAddProductForRow(<?= $soyish['id'] ?>)" title="Qo'shish">➕</button>
+                                <span class="badge bg-success">
+                                    <?= htmlspecialchars($soyish['joja_soni']) ?> dona
+                                </span>
                             </td>
-                        </tr>       
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                            <td data-order="<?= $soyish['sana'] ?>">
+                                <?= date('d.m.Y', strtotime($soyish['sana'])) ?>
+                            </td>
+                            <td><?= htmlspecialchars($soyish['izoh']) ?></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" title="Ko'rish" onclick="viewDetails(<?= $soyish['id'] ?>)">
+                                    👁️
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="Qo'shish" onclick="showAddProductForRow(<?= $soyish['id'] ?>)">
+                                    ➕
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
-    <!-- Tarix ko'rish modali -->
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <div id="historyContent">
@@ -103,28 +120,22 @@
                         </tr>
                     </thead>
                     <tbody id="historyTableBody">
-                        <!-- Bu yerda tarix ma'lumotlari ko'rsatiladi -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-                       
-    <!-- Qator uchun mahsulot qo'shish modali -->
     <div id="addProductForRowModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>➕ Qator uchun mahsulot qo'shish</h3>
                 <button class="close" onclick="closeModal('addProductForRowModal')">&times;</button>
             </div>
-            <!-- Tanlangan qator ma'lumotlari -->
             <div id="selectedRowInfo" style="margin-bottom: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
                 <h4>Tanlangan qator ma'lumotlari:</h4>
                 <div id="selectedRowData">
-                    <!-- Bu yerda tanlangan qator ma'lumotlari ko'rsatiladi -->
                 </div>
             </div>
-            <!-- Qo'shilgan mahsulotlar -->
             <div id="addedProductsInfoForRow" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                 <h4>Qo'shilgan mahsulotlar:</h4>
                 <div id="addedProductsListForRow">
@@ -134,7 +145,6 @@
                     <strong>Jami: <span id="totalProductsForRow">0</span> ta mahsulot</strong>
                 </div>
             </div>
-            <!-- Mahsulot qo'shish formi -->
             <form id="addProductForRowForm" onsubmit="addProductForRow(event)">
                 <div class="form-grid">
                     <div class="form-group">
@@ -157,9 +167,31 @@
             </form>
         </div>
     </div>
-   
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script>
-        
+        $(document).ready(function () {
+            $('#topshirishlarTable').DataTable({
+                responsive: true,
+                order: [[2, 'desc']], 
+                language: {
+                    search: "Qidiruv:",
+                    lengthMenu: "Har sahifada _MENU_ ta yozuv",
+                    info: "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                    paginate: {
+                        first: "Birinchi",
+                        last: "Oxirgi",
+                        next: "Keyingi",
+                        previous: "Oldingi"
+                    },
+                    zeroRecords: "Hech narsa topilmadi",
+                    infoEmpty: "Ma’lumot yo‘q",
+                    infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+                }
+            });
+        });
         let addedProducts = [];
         let rowProducts = {};
         $('#goshtTopshirishForm').on('submit', function (event) {

@@ -34,6 +34,8 @@
                 'summa' => $summa
             ];
             $db->insert('sotuv_mahsulotlar', $product_data);
+            $mahsulot_by_id = $db->get_data_by_table('mahsulot_zahirasi', ['mahsulot_id'=>$m['mahsulot_id']]);
+            $db->update('mahsulot_zahirasi', ['soni'=>$mahsulot_by_id['soni'] - $soni], ' mahsulot_id = '.$m['mahsulot_id']);
         }
         $mijoz_by_id = $db->get_data_by_table('mijozlar', ['id'=>$mijoz_id]);
         $db->update('mijozlar', ['balans'=>$umumiy_summa + $mijoz_by_id['balans']], ' id='.$mijoz_id);

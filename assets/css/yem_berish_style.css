@@ -1,0 +1,170 @@
+.table-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.table-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+}
+
+.filter-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+}
+
+.filter-section label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.filter-section .form-control {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.filter-section .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.btn-clear {
+    background: linear-gradient(45deg, #6c757d, #5a6268);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-clear:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108,117,125,0.3);
+    color: white;
+}
+ thead th {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 15px 12px;
+}
+
+ tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+    transition: all 0.2s ease;
+}
+
+ tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+    transform: translateY(-1px);
+}
+
+.badge-katak {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.miqdor-badge {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* DataTables Controls Styling */
+.dataTables_wrapper .dataTables_length select {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: #495057;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    outline: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 6px;
+    margin: 0 2px;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white !important;
+    border-color: #007bff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #f8f9fa;
+    color: #007bff !important;
+    border-color: #007bff;
+    transform: translateY(-1px);
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filter-section {
+        padding: 15px;
+    }
+    
+    .table-container {
+        padding: 15px;
+    }
+    
+     thead th,
+     tbody td {
+        padding: 8px 6px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Loading Animation */
+.dataTables_processing {
+    background: rgba(255,255,255,0.9);
+    color: #007bff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 20px;
+}

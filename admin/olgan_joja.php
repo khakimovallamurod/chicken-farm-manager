@@ -45,33 +45,75 @@ $kataklar = $db->get_data_by_table_all('kataklar');
         $fetch = $db->query($query_for_oj);
         
     ?>
-    <div class="table-container">
-        <h3>O'lgan jo'jalar ro'yxati</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Katak nomi</th>
-                    <th>Soni</th>
-                    <th>O'lgan sana</th>
-                    <th>Izoh</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($olgan_joja = mysqli_fetch_assoc($fetch)) {?>                    
+    <div class="table-container shadow p-3 mb-4 bg-white rounded">
+        <h3 class="table-title mb-3">
+            <i class="fas fa-skull-crossbones me-2 text-danger"></i>O'lgan jo'jalar ro'yxati
+        </h3>
+
+        <div class="table-responsive">
+            <table id="olganJojalarTable" class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-secondary">
                     <tr>
-                        <td><?=$olgan_joja['katak_nomi']?></td>
-                        <td><?=$olgan_joja['soni']?></td>
-                        <td><?=$olgan_joja['sana']?></td>
-                        <td><?=$olgan_joja['izoh']?></td>                        
+                        <th><i class="fas fa-home me-1"></i>Katak nomi</th>
+                        <th><i class="fas fa-minus-circle me-1"></i>Soni</th>
+                        <th><i class="fas fa-calendar-times me-1"></i>O'lgan sana</th>
+                        <th><i class="fas fa-comment-dots me-1"></i>Izoh</th>
                     </tr>
-                <?}?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php while ($olgan_joja = mysqli_fetch_assoc($fetch)) { ?>                    
+                        <tr>
+                            <td>
+                                <span class="badge bg-dark"><?= htmlspecialchars($olgan_joja['katak_nomi']) ?></span>
+                            </td>
+                            <td>
+                                <span class="badge bg-danger"><?= htmlspecialchars($olgan_joja['soni']) ?> dona</span>
+                            </td>
+                            <td data-order="<?= $olgan_joja['sana'] ?>">
+                                <?= date('d.m.Y', strtotime($olgan_joja['sana'])) ?>
+                            </td>
+                            <td><?= htmlspecialchars($olgan_joja['izoh']) ?></td>                        
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
     </div>
+
 </section>
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
+<!-- Bootstrap 5 DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<!-- jQuery (majburiy) -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
+    $(document).ready(function () {
+        $('#olganJojalarTable').DataTable({
+            responsive: true,
+            order: [[2, 'desc']], // O'lgan sana bo'yicha kamayish
+            language: {
+                search: "Qidiruv:",
+                lengthMenu: "Har sahifada _MENU_ ta yozuv ko‘rsatiladi",
+                info: "Jami _TOTAL_ tadan _START_–_END_ ko‘rsatilmoqda",
+                paginate: {
+                    first: "Birinchi",
+                    last: "Oxirgi",
+                    next: "Keyingi",
+                    previous: "Oldingi"
+                },
+                zeroRecords: "Hech narsa topilmadi",
+                infoEmpty: "Ma’lumot yo‘q",
+                infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+            }
+        });
+    });
     function addOlganJoja(event) {
         event.preventDefault();
         const katakId = $('#olgan_katak_id').val();

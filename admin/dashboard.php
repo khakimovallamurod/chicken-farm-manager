@@ -13,6 +13,9 @@ if (!isset($_SESSION['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tovuq Firma CRM - Admin Panel</title>
     <link rel="stylesheet" href="../assets/css/dashboard_style.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/yem_berish_style.css">
     <style>        
         /* ❌ Olib tashlash tugmasi uchun maxsus stil */
         .remove-btn {
@@ -213,67 +216,7 @@ if (!isset($_SESSION['login'])) {
         <!-- Content Area -->
         <main class="content-area">
             <!-- Dashboard -->
-            <section id="dashboard" class="content-section active">
-                <div class="section-header">
-                    <h2 class="section-title">📊 Dashboard</h2>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>8</h3>
-                        <p>Jami kataklar</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>2,450</h3>
-                        <p>Jami jo'jalar</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>45,000,000</h3>
-                        <p>Oylik daromad (so'm)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>12,500,000</h3>
-                        <p>Oylik xarajat (so'm)</p>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Katak</th>
-                                <th>Jo'jalar soni</th>
-                                <th>Yoshi</th>
-                                <th>Holati</th>
-                                <th>Oxirgi yem</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Katak #1</td>
-                                <td>245</td>
-                                <td>25 kun</td>
-                                <td><span class="katak-status status-active">Faol</span></td>
-                                <td>Bugun 08:30</td>
-                            </tr>
-                            <tr>
-                                <td>Katak #2</td>
-                                <td>198</td>
-                                <td>18 kun</td>
-                                <td><span class="katak-status status-active">Faol</span></td>
-                                <td>Bugun 08:45</td>
-                            </tr>
-                            <tr>
-                                <td>Katak #3</td>
-                                <td>0</td>
-                                <td>-</td>
-                                <td><span class="katak-status status-inactive">Faol emas</span></td>
-                                <td>-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            <?php include_once 'view_dashboard.php' ?>
 
             <!-- Kataklar -->
             <?php include_once 'kataklar_view.php'; ?>
@@ -403,7 +346,10 @@ if (!isset($_SESSION['login'])) {
     </div>
 
     <div id="alertContainer" style="position: fixed; top: 100px; right: 20px; z-index: 3000;"></div>
-
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="../assets/js/dashboard_script.js"></script>
     
 </body>

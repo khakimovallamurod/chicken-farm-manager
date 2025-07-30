@@ -93,20 +93,36 @@ class Database{
             }
             return $this -> query($sql);
         }
-    public function insert_table(){
-        $query = "CREATE TABLE IF NOT EXISTS `yem_berish` (
-            `id` INT AUTO_INCREMENT PRIMARY KEY,
-            `katak_id` INT NOT NULL,
-            `mahsulot_id` INT NOT NULL,
-            `sana` DATE NOT NULL,
-            `miqdori` DECIMAL(10, 2) NOT NULL,
-            `izoh` TEXT
-        );";
-        return $this->query($query);
+    public function dashboard_view_data(){
+        $kataklar = count($this->get_data_by_table_all('kataklar'));
+
+        $jami_joja_soni = mysqli_fetch_assoc($this->query("
+            SELECT SUM(soni) as jami_joja_soni FROM joja
+        "))['jami_joja_soni'];
+
+        $jami_mahsulot_summasi = mysqli_fetch_assoc($this->query("
+            SELECT SUM(z.soni * m.narxi) AS jami_zahira_summa 
+            FROM mahsulot_zahirasi z 
+            JOIN mahsulotlar m ON z.mahsulot_id = m.id
+        "))['jami_zahira_summa'];
+
+        $taminotchilar_balans = mysqli_fetch_assoc($this->query("
+            SELECT SUM(balans) as jami_balans FROM taminotchilar
+        "))['jami_balans'];
+
+        $mijozlar_balans = mysqli_fetch_assoc($this->query("
+            SELECT SUM(balans) as jami_balans FROM mijozlar
+        "))['jami_balans'];
+
+        return [
+            'kataklar_soni' => number_format($kataklar, 0, '.', ' '),
+            'jami_joja_soni' => number_format($jami_joja_soni ?? 0, 0, '.', ' '),
+            'jami_mahsulot_summasi' => number_format($jami_mahsulot_summasi ?? 0, 0, '.', ' '),
+            'taminotchilar_balans' => number_format($taminotchilar_balans ?? 0, 0, '.', ' '),
+            'mijozlar_balans' => number_format($mijozlar_balans ?? 0, 0, '.', ' ')
+        ];
     }
 
 }
-// $obj = new Database();
-// $obj->insert_table();
-
+$obj = new Database();
 ?>

@@ -49,10 +49,92 @@
         </div>
         <button type="submit" class="btn btn-success">🐥 Jo'ja qo'shish</button>
     </form>
+    <?php
+        include_once '../config.php';
+        $db = new Database();
+        $query_for_oj = "
+        SELECT 
+        j.id AS joja_id, j.sana, j.soni, j.narxi, j.izoh, k.katak_nomi, m.nomi AS mahsulot_nomi 
+        FROM joja j INNER JOIN kataklar k ON j.katak_id = k.id 
+        INNER JOIN mahsulotlar m ON j.mahsulot_id = m.id ORDER BY j.sana DESC;
+        ";
+        $fetch = $db->query($query_for_oj);
+        
+    ?>
+    <div class="table-container">
+        <h3 class="table-title">
+            <i class="fas fa-list-alt me-2"></i>Qo'shilgan jo'jalar ro'yxati
+        </h3>
+        
+        <div class="table-responsive">
+            <table id="qoshilganJojalarTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-home me-1"></i>Katak nomi</th>
+                        <th><i class="fas fa-drumstick-bite me-1"></i>Mahsulot nomi</th>
+                        <th><i class="fas fa-plus-square me-1"></i>Soni</th>
+                        <th><i class="fas fa-money-bill-wave me-1"></i>Narxi</th>
+                        <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
+                        <th><i class="fas fa-comment me-1"></i>Izoh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($joja_row = mysqli_fetch_assoc($fetch)) {?>                    
+                        <tr>
+                            <td>
+                                <span class="badge-katak">
+                                    <?= htmlspecialchars($joja_row['katak_nomi']) ?>
+                                </span>
+                            </td>
+                            <td><?= htmlspecialchars($joja_row['mahsulot_nomi']) ?></td>
+                            <td>
+                                <span class="badge bg-success">
+                                    <?= htmlspecialchars($joja_row['soni']) ?> dona
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    <?= htmlspecialchars($joja_row['narxi']) ?> so'm
+                                </span>
+                            </td>
+                            <td data-order="<?= $joja_row['sana'] ?>">
+                                <?= date('d.m.Y', strtotime($joja_row['sana'])) ?>
+                            </td>
+                            <td><?= htmlspecialchars($joja_row['izoh']) ?></td>                        
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </section>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
 <script>
+$(document).ready(function () {
+        $('#qoshilganJojalarTable').DataTable({
+            order: [[4, 'desc']], // Sana bo‘yicha kamayish tartibida default sort
+            language: {
+                search: "Qidiruv:",
+                lengthMenu: "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
+                info: "_TOTAL_ tadan _START_ dan _END_ gacha ko‘rsatilmoqda",
+                paginate: {
+                    first: "Birinchi",
+                    last: "Oxirgi",
+                    next: "Keyingi",
+                    previous: "Oldingi"
+                },
+                zeroRecords: "Hech narsa topilmadi",
+                infoEmpty: "Ma’lumot mavjud emas",
+                infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+            }
+        });
+    });
     function addJoja(event) {
         event.preventDefault();
         const katakId = $('#joja_katak_id').val();
