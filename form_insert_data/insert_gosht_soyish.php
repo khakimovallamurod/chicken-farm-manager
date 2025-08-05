@@ -5,12 +5,14 @@
 
     $katak_id = $_POST['katak_id'] ?? '';
     $soni = $_POST['soni'] ?? 0;
+    $massasi = $_POST['massasi'] ?? 0;
     $sana = $_POST['sana'] ?? '';
     $izoh = $_POST['izoh'] ?? '';
 
     $gosht_data = [
         'katak_id' => $katak_id,
         'joja_soni' => $soni,
+        'massasi'=>$massasi,
         'sana' => $sana,
         'izoh' => $izoh
     ];

@@ -8,57 +8,56 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
 <section id="yem" class="content-section">
     <div class="section-header">
         <h2 class="section-title">🌾 Yem berish</h2>
-    </div>
-    <form id="yemForm" onsubmit="addYem(event)">
-        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
-            <div class="form-group">
-                <label>Katak tanlang:</label>
-                <select id="yem_katak_id" required>
-                    <option value="">Katakni tanlang</option>
-                    <?php foreach ($kataklar as $katak): ?>
-                        <option value="<?= $katak['id'] ?>">
-                            <?= $katak['katak_nomi'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Sana:</label>
-                <input type="date" id="yem_sana" required>
-            </div>
-            <div class="form-group">
-                <label>Yem turi:</label>
-                <select id="yem_turi" required>
-                    <option value="">Yem turini tanlang</option>
-                    <?php foreach ($mahsulotlar as $mahsulot): ?>
-                        <option value="<?= $mahsulot['id'] ?>">
-                            <?= $mahsulot['nomi'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Yem miqdori (kg):</label>
-                <input type="number" id="yem_miqdori" required min="1" placeholder="Masalan: 50">
-            </div>
-        </div>                   
-        <div class="form-group">
-            <label>Izoh:</label>
-            <textarea id="yem_izoh" rows="3" placeholder="Yem turi, sifati haqida..."></textarea>
+        <div style="margin-top: 1rem;">
+            <button id="toggleYemViewBtn" class="btn btn-outline-primary">📋 Jadval ko‘rinishini ko‘rsatish</button>
         </div>
-        <button type="submit" class="btn btn-success">🌾 Yem berish</button>
-    </form>
-    <?php
-        include_once '../config.php';
-        $db = new Database();
-        $query_for_oj = "
-        SELECT yb.id AS yem_id, yb.sana, yb.miqdori, yb.izoh, k.katak_nomi, m.nomi AS mahsulot_nomi 
-        FROM yem_berish yb INNER JOIN kataklar k ON yb.katak_id = k.id 
-        INNER JOIN mahsulotlar m ON yb.mahsulot_id = m.id ORDER BY yb.sana DESC;
-        ";
-        $fetch = $db->query($query_for_oj);
-    ?>
-    <div class="table-container">
+    </div>
+
+    <!-- FORM KO‘RINISHI -->
+    <div id="yemFormSection">
+        <form id="yemForm" onsubmit="addYem(event)">
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Katak tanlang:</label>
+                    <select id="yem_katak_id" required>
+                        <option value="">Katakni tanlang</option>
+                        <?php foreach ($kataklar as $katak): ?>
+                            <option value="<?= $katak['id'] ?>">
+                                <?= $katak['katak_nomi'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sana:</label>
+                    <input type="date" id="yem_sana" required>
+                </div>
+                <div class="form-group">
+                    <label>Yem turi:</label>
+                    <select id="yem_turi" required>
+                        <option value="">Yem turini tanlang</option>
+                        <?php foreach ($mahsulotlar as $mahsulot): ?>
+                            <option value="<?= $mahsulot['id'] ?>">
+                                <?= $mahsulot['nomi'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Yem miqdori (kg):</label>
+                    <input type="number" id="yem_miqdori" required min="1" placeholder="Masalan: 50">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Izoh:</label>
+                <textarea id="yem_izoh" rows="3" placeholder="Yem turi, sifati haqida..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">🌾 Yem berish</button>
+        </form>
+    </div>
+
+    <!-- JADVAL KO‘RINISHI -->
+    <div class="table-container" id="yemTableSection" style="display: none;"style="display: none;">
         <h3 class="table-title">
             <i class="fas fa-list-alt me-2"></i>Yem berish ro'yxati
         </h3>
@@ -83,6 +82,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
                 </div>
             </div>
         </div>
+
         <div class="table-responsive">
             <table id="yemBerishTable" class="table table-hover">
                 <thead>
@@ -95,23 +95,22 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($joja_row = mysqli_fetch_assoc($fetch)) {?>                    
+                    <?php
+                    $query_for_oj = "
+                        SELECT yb.id AS yem_id, yb.sana, yb.miqdori, yb.izoh, k.katak_nomi, m.nomi AS mahsulot_nomi 
+                        FROM yem_berish yb 
+                        INNER JOIN kataklar k ON yb.katak_id = k.id 
+                        INNER JOIN mahsulotlar m ON yb.mahsulot_id = m.id 
+                        ORDER BY yb.sana DESC;
+                    ";
+                    $fetch = $db->query($query_for_oj);
+                    while ($joja_row = mysqli_fetch_assoc($fetch)) { ?>
                         <tr>
-                            <td>
-                                <span class="badge-katak">
-                                    <?= htmlspecialchars($joja_row['katak_nomi']) ?>
-                                </span>
-                            </td>
+                            <td><span class="badge-katak"><?= htmlspecialchars($joja_row['katak_nomi']) ?></span></td>
                             <td><?= htmlspecialchars($joja_row['mahsulot_nomi']) ?></td>
-                            <td>
-                                <span class="miqdor-badge">
-                                    <?= htmlspecialchars($joja_row['miqdori']) ?> kg
-                                </span>
-                            </td>
-                            <td data-order="<?= $joja_row['sana'] ?>">
-                                <?= date('d.m.Y', strtotime($joja_row['sana'])) ?>
-                            </td>
-                            <td><?= htmlspecialchars($joja_row['izoh']) ?></td>                        
+                            <td><span class="miqdor-badge"><?= htmlspecialchars($joja_row['miqdori']) ?> kg</span></td>
+                            <td data-order="<?= $joja_row['sana'] ?>"><?= date('d.m.Y', strtotime($joja_row['sana'])) ?></td>
+                            <td><?= htmlspecialchars($joja_row['izoh']) ?></td>
                         </tr>
                     <?php } ?>
                 </tbody>
@@ -120,14 +119,28 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
     </div>
 </section>
 
+
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 <script>
+    const toggleYemBtn = document.getElementById('toggleYemViewBtn');
+    const yemFormSection = document.getElementById('yemFormSection');
+    const yemTableSection = document.getElementById('yemTableSection');
+
+    toggleYemBtn.addEventListener('click', () => {
+        const isFormVisible = yemFormSection.style.display !== 'none';
+
+        yemFormSection.style.display = isFormVisible ? 'none' : 'block';
+        yemTableSection.style.display = isFormVisible ? 'block' : 'none';
+
+        toggleYemBtn.innerHTML = isFormVisible 
+            ? '➕ Forma ko‘rinishini ko‘rsatish' 
+            : '📋 Jadval ko‘rinishini ko‘rsatish';
+    });
    $(document).ready(function() {
-        // Moment.js kutubxonasini ishlatib sana formatini o'zgartiramiz
         $.fn.dataTable.moment('DD.MM.YYYY');
         
         var table = $('#yemBerishTable').DataTable({
@@ -135,45 +148,37 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
                 url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/uz.json'
             },
             pageLength: 10,
-            order: [[3, 'desc']], // Boshlang'ich tartib - sana bo'yicha kamayish
+            order: [[3, 'desc']],
             responsive: true,
             dom: '<"top"lf>rt<"bottom"ip>',
             columnDefs: [
                 { 
-                    targets: 3, // Sana ustuni
-                    type: 'date', // DataTables-ga bu ustun sana ekanligini aytamiz
+                    targets: 3, 
+                    type: 'date', 
                     render: function(data, type, row) {
-                        // Ko'rinish uchun format
                         if (type === 'display') {
                             return moment(data, 'YYYY-MM-DD').format('DD.MM.YYYY');
                         }
-                        // Tartiblash va filter uchun format
                         return data;
                     }
                 }
             ]
         });
 
-        // Sana oralig'i filter funksiyasi
         $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex) {
                 var min = $('#min-date').val();
                 var max = $('#max-date').val();
-                
-                // Agar filter qo'yilmagan bo'lsa
                 if (!min && !max) {
                     return true;
                 }
                 
-                // Jadvaldagi sanani olish (ISO formatda)
                 var rowDateStr = table.row(dataIndex).data()[3];
                 
-                // Agar jadvalda sana yo'q bo'lsa
                 if (!rowDateStr) {
                     return false;
                 }
                 
-                // Sana obyektlarini yaratish
                 var rowDate = new Date(rowDateStr);
                 var minDate = min ? new Date(min) : null;
                 var maxDate = max ? new Date(max) : null;
@@ -191,12 +196,10 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
             }
         );
 
-        // Filter o'zgarishlarini kuzatish
         $('#min-date, #max-date').on('change', function() {
             table.draw();
         });
 
-        // Filterni tozalash
         $('#clear-dates').on('click', function() {
             $('#min-date, #max-date').val('');
             table.draw();

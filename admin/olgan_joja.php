@@ -7,35 +7,41 @@ $kataklar = $db->get_data_by_table_all('kataklar');
 <section id="olganjoja" class="content-section">
     <div class="section-header">
         <h2 class="section-title">💀 O'lgan jo'jalarni ayirish</h2>
+        <div style="margin-top: 1rem;">
+            <button id="toggleOlganViewBtn" class="btn btn-outline-success">📋 Jadval ko‘rinishini ko‘rsatish</button>
+        </div>
     </div>
-    <form id="olganJojaForm" onsubmit="addOlganJoja(event)">
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Katak tanlang:</label>
-                <select id="olgan_katak_id" required>
-                    <option value="">Katakni tanlang</option>
-                    <?php foreach ($kataklar as $katak): ?>
-                        <option value="<?= $katak['id'] ?>">
-                            <?= $katak['katak_nomi'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+    <div id="olganFormSection">
+        <form id="olganJojaForm" onsubmit="addOlganJoja(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Katak tanlang:</label>
+                    <select id="olgan_katak_id" required>
+                        <option value="">Katakni tanlang</option>
+                        <?php foreach ($kataklar as $katak): ?>
+                            <option value="<?= $katak['id'] ?>">
+                                <?= $katak['katak_nomi'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>O'lgan jo'jalar soni:</label>
+                    <input type="number" id="olgan_soni" required min="1" placeholder="Masalan: 5">
+                </div>
+                <div class="form-group">
+                    <label>Sana:</label>
+                    <input type="date" id="olgan_sana" required>
+                </div>
             </div>
             <div class="form-group">
-                <label>O'lgan jo'jalar soni:</label>
-                <input type="number" id="olgan_soni" required min="1" placeholder="Masalan: 5">
+                <label>Sabab/Izoh:</label>
+                <textarea id="olgan_izoh" rows="3" placeholder="O'lim sababi..."></textarea>
             </div>
-            <div class="form-group">
-                <label>Sana:</label>
-                <input type="date" id="olgan_sana" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Sabab/Izoh:</label>
-            <textarea id="olgan_izoh" rows="3" placeholder="O'lim sababi..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-danger">💀 O'lgan jo'jani ayirish</button>
-    </form>
+            <button type="submit" class="btn btn-danger">💀 O'lgan jo'jani ayirish</button>
+        </form>
+    </div>
+    
     <?php
         include_once '../config.php';
         $db = new Database();
@@ -45,7 +51,7 @@ $kataklar = $db->get_data_by_table_all('kataklar');
         $fetch = $db->query($query_for_oj);
         
     ?>
-    <div class="table-container shadow p-3 mb-4 bg-white rounded">
+    <div class="table-container shadow p-3 mb-4 bg-white rounded" id="olganTableSection" style="display: none;">
         <h3 class="table-title mb-3">
             <i class="fas fa-skull-crossbones me-2 text-danger"></i>O'lgan jo'jalar ro'yxati
         </h3>
@@ -79,21 +85,24 @@ $kataklar = $db->get_data_by_table_all('kataklar');
             </table>
         </div>
     </div>
-
 </section>
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
-<!-- Bootstrap 5 DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
-<!-- jQuery (majburiy) -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
+    const toggleOlganBtn = document.getElementById('toggleOlganViewBtn');
+    const olganFormSection = document.getElementById('olganFormSection');
+    const olganTableSection = document.getElementById('olganTableSection');
+
+    toggleOlganBtn.addEventListener('click', () => {
+        const isFormVisible = olganFormSection.style.display !== 'none';
+
+        olganFormSection.style.display = isFormVisible ? 'none' : 'block';
+        olganTableSection.style.display = isFormVisible ? 'block' : 'none';
+
+        toggleOlganBtn.innerHTML = isFormVisible 
+            ? '➕ Forma ko‘rinishini ko‘rsatish' 
+            : '📋 Jadval ko‘rinishini ko‘rsatish';
+    });
     $(document).ready(function () {
         $('#olganJojalarTable').DataTable({
             responsive: true,

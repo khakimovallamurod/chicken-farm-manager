@@ -8,6 +8,9 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
 <section id="kirim" class="content-section">
     <div class="section-header">
         <h2 class="section-title">📥 Kirimlar</h2>
+        <div style="margin-top: 1rem;">
+            <button id="toggleKirimViewBtn" class="btn btn-outline-success">📋 Jadval ko‘rinishini ko‘rsatish</button>
+        </div>
     </div>
     <form id="kirimForm" onsubmit="addKirim(event)">
         <div class="form-grid">
@@ -62,10 +65,188 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         </div>
         <button type="submit" class="btn btn-success">📥 Kirim qo'shish</button>
     </form>
+    <?php
+        include_once '../config.php';
+        $db = new Database();
+        $query = "SELECT 
+            k.id,
+            k.sana,
+            k.summa,
+            k.izoh,
+            t.kompaniya_nomi,
+            t.fio,
+            t.telefon,
+            t.balans
+        FROM kirimlar k
+        LEFT JOIN taminotchilar t ON k.taminotchi_id = t.id ORDER BY k.sana DESC;";
+        $kirimlar = $db->query($query);
+
+    ?>
+    <div class="table-container" id="kirimTableSection" style="display: none;">
+        <h3>Kirimlar ro'yxati</h3>
+        <table id="kirimTable" class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>FIO</th>
+                    <th>Kompaniya Nomi</th>
+                    <th>Balans</th>
+                    <th>Telafon raqam</th>
+                    <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
+                    <th>Summa</th>
+                    <th>Izoh</th>
+                    <th>Ko'rish</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($kirim =  mysqli_fetch_assoc($kirimlar)){ ?>
+                    <tr>
+                        <td><?=$kirim['fio']?></td>
+                        <td><?=$kirim['kompaniya_nomi']?></td>
+                        <td><?=$kirim['balans']?></td>
+                        <td><?=$kirim['telefon']?></td>
+                        <td><?=$kirim['sana']?></td>                        
+                        <td><?=$kirim['summa']?></td>                        
+                        <td><?=$kirim['izoh']?></td> 
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning" title="Ko'rish" onclick="viewDetailsKirim(<?= $kirim['id'] ?>)">
+                                👁️
+                            </button>
+                        </td>                       
+                    </tr>
+                <?php }; ?>
+            </tbody>
+        </table>
+    </div>
 </section>
+<div id="historyKirimModal" class="modal">
+    <div class="modal-content">
+        <div id="historyContent">
+            
+        </div>
+    </div>
+</div>
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
 <script>
+    function viewDetailsKirim(rowId) {
+        const modal = document.getElementById('historyKirimModal');
+        const historyContent = document.getElementById('historyContent');
+        historyContent.innerHTML = '<div style="text-align: center; padding: 40px;">Yuklanmoqda...</div>';
+        modal.style.display = 'flex';
+
+        fetch('../api/get_kirim_details.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + rowId
+        })
+        .then(response => response.json())
+        .then(records => {
+            historyContent.innerHTML = `
+                <div class="modal-header">
+                    <h3>💰 Kirim tafsilotlari</h3>
+                    <button class="close" onclick="closeModal('historyKirimModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table id="kirimDetailsTable" class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Soni</th>
+                                <th>Narxi</th>
+                                <th>Jami</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" id="kirimJamiRow" class="text-end"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+
+            const tbody = document.querySelector('#kirimDetailsTable tbody');
+            let total = 0;
+
+            if (records.length > 0) {
+                records.forEach((item, index) => {
+                    total += parseFloat(item.summa);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.soni}</td>
+                        <td>${item.narxi}</td>
+                        <td>${item.summa} so'm</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.getElementById('kirimJamiRow').innerHTML = `
+                    <strong>Jami summa: ${total} so'm</strong>
+                `;
+
+                setTimeout(() => {
+                    $('#kirimDetailsTable').DataTable({
+                        responsive: true,
+                        language: {
+                            search: "Qidiruv:",
+                            lengthMenu: "Har sahifada _MENU_ ta yozuv",
+                            info: "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                            paginate: {
+                                first: "Birinchi",
+                                last: "Oxirgi",
+                                next: "Keyingi",
+                                previous: "Oldingi"
+                            },
+                            zeroRecords: "Hech narsa topilmadi",
+                            infoEmpty: "Ma’lumot yo‘q",
+                            infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+                        }
+                    });
+                }, 100);
+
+            } else {
+                document.querySelector('.modal-body').innerHTML = `
+                    <div class="no-products">
+                        <p>Bu kirim uchun tafsilotlar topilmadi</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Xatolik:', error);
+            historyContent.innerHTML = `
+                <div class="error-message">
+                    <p>Ma'lumotlarni yuklashda xatolik yuz berdi.</p>
+                </div>
+            `;
+        });
+    }
+
+    $(document).ready(function() {
+        $('#kirimTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/uz.json' 
+            }
+        });
+    });
+    const toggleKirimViewBtn = document.getElementById('toggleKirimViewBtn');
+    const kirimForm = document.getElementById('kirimForm');
+    const kirimTableSection = document.getElementById('kirimTableSection');
+
+    toggleKirimViewBtn.addEventListener('click', () => {
+        const isFormVisible = kirimForm.style.display !== 'none';
+
+        kirimForm.style.display = isFormVisible ? 'none' : 'block';
+        kirimTableSection.style.display = isFormVisible ? 'block' : 'none';
+
+        toggleKirimViewBtn.innerHTML = isFormVisible 
+            ? '➕ Forma ko‘rinishini ko‘rsatish' 
+            : '📋 Jadval ko‘rinishini ko‘rsatish';
+    });
     function addKirimProduct() {            
         const wrapper = document.getElementById('kirim-mahsulotlar-wrapper');
         const newRow = document.createElement('div');

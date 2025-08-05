@@ -18,8 +18,11 @@
     <section id="goshttopshirish" class="content-section">
         <div class="section-header">
             <h2 class="section-title">🥩 Go'sht so'yish</h2>
+            <div style="margin-top: 1rem;">
+                <button id="toggleGoshtViewBtn" class="btn btn-outline-success">📋 Jadval ko‘rinishini ko‘rsatish</button>
+            </div>
         </div>
-        <div class="form-container">
+        <div class="form-container" id="goshtFormSection">
             <form id="goshtTopshirishForm">
                 <div class="form-grid">
                     <div class="form-group">
@@ -32,6 +35,10 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Topshiriladigan jo'jalar massasi:</label>
+                        <input type="number" id="gosht_massasi" required min="1" placeholder="Masalan: 500kg">
                     </div>
                     <div class="form-group">
                         <label>Topshiriladigan jo'jalar soni:</label>
@@ -49,7 +56,7 @@
                 <button type="submit" class="btn btn-primary">🥩 Go'sht so'yish</button>
             </form>
         </div>
-        <div class="table-container">
+        <div class="table-container" id="goshtTableSection" style="display: none;">
             <h3 class="table-title">
                 <i class="fas fa-list-alt me-2"></i>So'nggi topshirishlar
             </h3>
@@ -58,6 +65,7 @@
                     <thead>
                         <tr>
                             <th><i class="fas fa-home me-1"></i>Katak</th>
+                            <th><i class="fas fa-dove me-1"></i>Jo'jalar massasi</th>
                             <th><i class="fas fa-dove me-1"></i>Jo'jalar soni</th>
                             <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
                             <th><i class="fas fa-comment me-1"></i>Izoh</th>
@@ -79,6 +87,11 @@
                             </td>
                             <td>
                                 <span class="badge bg-success">
+                                    <?= htmlspecialchars($soyish['massasi']) ?> kg
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
                                     <?= htmlspecialchars($soyish['joja_soni']) ?> dona
                                 </span>
                             </td>
@@ -87,7 +100,7 @@
                             </td>
                             <td><?= htmlspecialchars($soyish['izoh']) ?></td>
                             <td>
-                                <button class="btn btn-sm btn-outline-secondary" title="Ko'rish" onclick="viewDetails(<?= $soyish['id'] ?>)">
+                                <button class="btn btn-sm btn-outline-warning" title="Ko'rish" onclick="viewDetails(<?= $soyish['id'] ?>)">
                                     👁️
                                 </button>
                             </td>
@@ -107,16 +120,16 @@
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <div id="historyContent">
-                <table>
+                <table id="historyTable" class="table table-hover align-middle text-center">
                     <thead>
                         <tr>
-                            <th>Sana</th>
-                            <th>Katak</th>
-                            <th>Jo'jalar soni</th>
-                            <th>Mijoz</th>
-                            <th>Kg narxi</th>
-                            <th>Jami summa</th>
-                            <th>Holati</th>
+                            <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
+                            <th><i class="fas fa-home me-1"></i>Katak</th>
+                            <th><i class="fas fa-dove me-1"></i>Jo'jalar soni</th>
+                            <th><i class="fas fa-user me-1"></i>Mijoz</th>
+                            <th><i class="fas fa-balance-scale me-1"></i>Kg narxi</th>
+                            <th><i class="fas fa-coins me-1"></i>Jami summa</th>
+                            <th><i class="fas fa-check-circle me-1"></i>Holati</th>
                         </tr>
                     </thead>
                     <tbody id="historyTableBody">
@@ -172,6 +185,20 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script>
+        const toggleGoshtBtn = document.getElementById('toggleGoshtViewBtn');
+        const goshtFormSection = document.getElementById('goshtFormSection');
+        const goshtTableSection = document.getElementById('goshtTableSection');
+
+        toggleGoshtBtn.addEventListener('click', () => {
+            const isFormVisible = goshtFormSection.style.display !== 'none';
+
+            goshtFormSection.style.display = isFormVisible ? 'none' : 'block';
+            goshtTableSection.style.display = isFormVisible ? 'block' : 'none';
+
+            toggleGoshtBtn.innerHTML = isFormVisible 
+                ? '➕ Forma ko‘rinishini ko‘rsatish' 
+                : '📋 Jadval ko‘rinishini ko‘rsatish';
+        });
         $(document).ready(function () {
             $('#topshirishlarTable').DataTable({
                 responsive: true,
@@ -192,6 +219,29 @@
                 }
             });
         });
+        
+        $('#historyTable').DataTable({
+            responsive: true,
+            order: [[2, 'desc']], 
+            language: {
+                search: "Qidiruv:",
+                lengthMenu: "Har sahifada _MENU_ ta yozuv",
+                info: "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                paginate: {
+                    first: "Birinchi",
+                    last: "Oxirgi",
+                    next: "Keyingi",
+                    previous: "Oldingi"
+                },
+                zeroRecords: "Hech narsa topilmadi",
+                infoEmpty: "Ma’lumot yo‘q",
+                infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+            }
+        });
+        var jq = $.noConflict();
+        jq(document).ready(function($) {
+            $('#historyTable').DataTable();
+        });
         let addedProducts = [];
         let rowProducts = {};
         $('#goshtTopshirishForm').on('submit', function (event) {
@@ -199,6 +249,7 @@
 
             const katak_id = $('#gosht_katak_id').val();
             const gosht_soni = $('#gosht_soni').val();
+            const gosht_massasi = $('#gosht_massasi').val();
             const gosht_sana = $('#gosht_sana').val();
             const gosht_izoh = $('#gosht_izoh').val();
 
@@ -209,6 +260,7 @@
                 data: {
                     katak_id: katak_id,
                     soni: gosht_soni,
+                    massasi: gosht_massasi,
                     sana: gosht_sana,
                     izoh: gosht_izoh
                 },
@@ -227,29 +279,7 @@
                 }
             });
         });
-        // Tarix ko'rish funksiyasi (bu endi ishlatilmaydi, lekin qoldiramiz)
-        function showHistory() {
-            const modal = document.getElementById('historyModal');
-            const historyTableBody = document.getElementById('historyTableBody');
-            
-            historyTableBody.innerHTML = '';
-            
-            goshtTopshirishData.forEach(item => {
-                const jamiSumma = item.soni * item.narx;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.sana}</td>
-                    <td>${item.katak}</td>
-                    <td>${item.soni}</td>
-                    <td>${item.mijoz}</td>
-                    <td>${item.narx.toLocaleString()}</td>
-                    <td>${jamiSumma.toLocaleString()}</td>
-                    <td><span class="katak-status ${item.holat === 'Topshirildi' ? 'status-active' : 'status-maintenance'}">${item.holat}</span></td>
-                `;
-                historyTableBody.appendChild(row);
-            });
-            modal.classList.add('show');
-        }
+        
         const goshtTopshirishData = <?php
             $data = [];
             foreach ($gosht_soyishlar as $soyish) {
@@ -261,6 +291,7 @@
                     'id' => $soyish['id'],
                     'katak' => $katak_nomi,
                     'soni' => $soyish['joja_soni'],
+                    'massasi' => $soyish['massasi'],
                     'sana' => $soyish['sana'],
                     'izoh' => $soyish['izoh'],
                 ];
@@ -279,6 +310,7 @@
                 document.getElementById('selectedRowData').innerHTML = `
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
                         <div><strong>Katak:</strong> ${selectedRow.katak}</div>
+                        <div><strong>Jo'jalar massasi:</strong> ${selectedRow.massasi}</div>
                         <div><strong>Jo'jalar soni:</strong> ${selectedRow.soni}</div>
                         <div><strong>Sana:</strong> ${selectedRow.sana}</div>
                         <div><strong>Izoh:</strong> ${selectedRow.izoh}</div>
@@ -415,7 +447,6 @@
             const historyContent = document.getElementById('historyContent');
             historyContent.innerHTML = '<div style="text-align: center; padding: 40px;">Yuklanmoqda...</div>';
             modal.style.display = 'flex';
-            // Ma'lumotlarni serverdan olish
             fetch('../api/get_gosht_mahsulotlar.php', {
                 method: 'POST',
                 headers: {
@@ -425,60 +456,73 @@
             })
             .then(response => response.json())
             .then(products => {
-                // Modal sarlavhasi
                 historyContent.innerHTML = `
                     <div class="modal-header">
                         <h3>📊 Go'sht so'yish mahsulotlari</h3>
                         <button class="close" onclick="closeModal('historyModal')">&times;</button>
                     </div>
                     <div class="modal-body">
+                        <table id="productsTable" class="table table-hover align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Mahsulot nomi</th>
+                                    <th>Miqdori</th>
+                                    <th>Narxi</th>
+                                    <th>Tavsif</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" id="jamiRow" class="text-end"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 `;
-                
+                const tbody = document.querySelector('#productsTable tbody');
+                let totalSum = 0;
+
                 if (products.length > 0) {
-                    // Jadval yaratish
-                    const table = document.createElement('table');
-                    table.className = 'product-table';
-                    
-                    // Jadval sarlavhasi
-                    const thead = document.createElement('thead');
-                    thead.innerHTML = `
-                        <tr>
-                            <th>№</th>
-                            <th>Mahsulot nomi</th>
-                            <th>Miqdori</th>
-                            <th>Tavsif</th>
-                        </tr>
-                    `;
-                    table.appendChild(thead);
-                    
-                    // Jadval tana qismi
-                    const tbody = document.createElement('tbody');
-                    let totalSum = 0;
-                    
                     products.forEach((product, index) => {
                         const rowSum = product.soni * product.narxi;
                         totalSum += rowSum;
-                        
+
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${index + 1}</td>
                             <td>${product.mahsulot_nomi}</td>
                             <td>${product.soni}</td>
+                            <td>${product.narxi}</td>
                             <td>${product.tavsif || '-'}</td>
                         `;
                         tbody.appendChild(row);
                     });
-                    
-                    // Jami qator
-                    const footerRow = document.createElement('tr');
-                    footerRow.className = 'total-row';
-                    footerRow.innerHTML = `
-                        <td colspan="3"><strong>Jami:</strong></td>
+                    document.getElementById('jamiRow').innerHTML = `
+                        <strong>Jami summa: ${totalSum.toLocaleString()} so'm</strong>
                     `;
-                    tbody.appendChild(footerRow);
-                    
-                    table.appendChild(tbody);
-                    document.querySelector('.modal-body').appendChild(table);
+
+                    setTimeout(() => {
+                        $('#productsTable').DataTable({
+                            responsive: true,
+                            language: {
+                                search: "Qidiruv:",
+                                lengthMenu: "Har sahifada _MENU_ ta yozuv",
+                                info: "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                                paginate: {
+                                    first: "Birinchi",
+                                    last: "Oxirgi",
+                                    next: "Keyingi",
+                                    previous: "Oldingi"
+                                },
+                                zeroRecords: "Hech narsa topilmadi",
+                                infoEmpty: "Ma’lumot yo‘q",
+                                infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+                            }
+                        });
+                    }, 100);
+
                 } else {
                     document.querySelector('.modal-body').innerHTML = `
                         <div class="no-products">
@@ -496,11 +540,11 @@
                 `;
             });
         }
+
         function editRecord(id) {
             alert(`Tahrirlash funksiyasi ID: ${id} uchun ishlab chiqilmoqda...`);
         }
 
-        // Modal tashqarisiga bosganda yopish
         window.onclick = function(event) {
             const historyModal = document.getElementById('historyModal');
             const addProductForRowModal = document.getElementById('addProductForRowModal');

@@ -3,6 +3,28 @@ include_once '../config.php';
 $db = new Database();
 $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_at DESC");
 ?>
+<style>
+    .expense-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .expense-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+    }
+</style>
 <section id="taminotchilar" class="content-section">
     <div class="section-header">
         <h2 class="section-title">🚛 Ta'minotchilar</h2>
@@ -10,67 +32,58 @@ $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_a
             ➕ Yangi ta'minotchi qo'shish
         </button>
     </div>
-    <div class="kataklar-grid">
+    <div style="margin-bottom: 1rem;">
+        <button id="toggleTaminotchiBtn" class="expense-btn">📋 Jadval ko‘rinishini ko‘rsatish</button>
+    </div>
+    <div id="taminotchiGridView" class="kataklar-grid">
         <?php foreach ($taminotchilar as $taminotchi): ?>
         <div class="katak-card">
             <div class="katak-header">
-                <div class="katak-title">🏢 <?=$taminotchi['kompaniya_nomi']?></div>
+                <div class="katak-title">🏢 <?= htmlspecialchars($taminotchi['kompaniya_nomi']) ?></div>
                 <span class="katak-status status-active">Faol</span>
             </div>
             <div class="katak-info">
                 <div class="info-item">
-                    <div class="info-value">15</div>
+                    <div class="info-value">15</div> 
                     <div class="info-label">Buyurtmalar</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-value"><?=$taminotchi['balans']?></div>
+                    <div class="info-value"><?= htmlspecialchars($taminotchi['balans']) ?></div>
                     <div class="info-label">balans</div>
                 </div>
             </div>
-            <p><strong>FIO:</strong> <?=$taminotchi['fio']?></p>
-            <p><strong>Mahsulotlar:</strong> <?=$taminotchi['mahsulotlar']?></p>
-            <p><strong>Telefon:</strong> <?=$taminotchi['telefon']?></p>
+            <p><strong>FIO:</strong> <?= htmlspecialchars($taminotchi['fio']) ?></p>
+            <p><strong>Mahsulotlar:</strong> <?= htmlspecialchars($taminotchi['mahsulotlar']) ?></p>
+            <p><strong>Telefon:</strong> <?= htmlspecialchars($taminotchi['telefon']) ?></p>
         </div>
         <?php endforeach; ?>
-       
     </div>
-<!-- 
-    <div class="table-container" style="margin-top: 2rem;">
-        <h3>So'nggi buyurtmalar</h3>
-        <table>
+    <div id="taminotchiTableView" style="display: none;">
+        <table id="taminotchiTable" class="display">
             <thead>
                 <tr>
-                    <th>Buyurtma ID</th>
-                    <th>Ta'minotchi</th>
-                    <th>Mahsulot</th>
-                    <th>Miqdor</th>
-                    <th>Summa</th>
-                    <th>Sana</th>
-                    <th>Status</th>
+                    <th>Kompaniya nomi</th>
+                    <th>Buyurtmalar</th>
+                    <th>Balans</th>
+                    <th>FIO</th>
+                    <th>Mahsulotlar</th>
+                    <th>Telefon</th>
                 </tr>
             </thead>
             <tbody>
+                <?php foreach ($taminotchilar as $taminotchi): ?>
                 <tr>
-                    <td>#ORD-001</td>
-                    <td>Yem Zavodi LLC</td>
-                    <td>Tovuq yemi</td>
-                    <td>500 kg</td>
-                    <td>1,750,000 so'm</td>
-                    <td>2024-12-15</td>
-                    <td><span class="katak-status status-active">Yetkazildi</span></td>
+                    <td><?= htmlspecialchars($taminotchi['kompaniya_nomi']) ?></td>
+                    <td>15</td>
+                    <td><?= htmlspecialchars($taminotchi['balans']) ?></td>
+                    <td><?= htmlspecialchars($taminotchi['fio']) ?></td>
+                    <td><?= htmlspecialchars($taminotchi['mahsulotlar']) ?></td>
+                    <td><?= htmlspecialchars($taminotchi['telefon']) ?></td>
                 </tr>
-                <tr>
-                    <td>#ORD-002</td>
-                    <td>Jo'ja Export MChJ</td>
-                    <td>1 kunlik jo'jalar</td>
-                    <td>200 dona</td>
-                    <td>1,000,000 so'm</td>
-                    <td>2024-12-18</td>
-                    <td><span class="katak-status status-empty">Kutilmoqda</span></td>
-                </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
-    </div> -->
+    </div>
 </section>
 <div id="taminotchiModal" class="modal">
     <div class="modal-content">
@@ -108,6 +121,27 @@ $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_a
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
 <script>
+    document.getElementById('toggleTaminotchiBtn').addEventListener('click', function() {
+        const grid = document.getElementById('taminotchiGridView');
+        const table = document.getElementById('taminotchiTableView');
+        
+        if (grid.style.display === 'none') {
+            grid.style.display = 'grid';
+            table.style.display = 'none';
+            this.innerText = '📋 Jadval ko‘rinishini ko‘rsatish';
+        } else {
+            grid.style.display = 'none';
+            table.style.display = 'block';
+            this.innerText = '📦 Katak ko‘rinishini ko‘rsatish';
+        }
+    });
+    $(document).ready(function() {
+        $('#taminotchiTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/uz.json' 
+            }
+        });
+    });
     $('#taminotchiForm').on('submit', function (event) {
         event.preventDefault(); 
         const nomi = $('#taminotchi_nomi').val();
