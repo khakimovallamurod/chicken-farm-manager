@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toviq - Professional Business Solutions</title>
+    <title>Tovuq - Professional Business Solutions</title>
     <link rel="stylesheet" href="assets/css/home_style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="nav-container">
-            <a href="#" class="logo">TOVIQ</a>
+            <a href="#" class="logo">TOVUQ FIRMA</a>
             <nav class="nav-menu" id="navMenu">
                 <li><a href="#home">Bosh sahifa</a></li>
                 <li><a href="#services">Xizmatlar</a></li>

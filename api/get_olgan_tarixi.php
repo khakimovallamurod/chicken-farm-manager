@@ -13,13 +13,23 @@
         SELECT 
             oj.sana,
             oj.soni,
-            j.narxi,
-            (oj.soni * j.narxi) AS summa,
+            (
+                SELECT j.narxi 
+                FROM joja j 
+                WHERE j.katak_id = oj.katak_id 
+                ORDER BY j.sana DESC 
+                LIMIT 1
+            ) AS narxi,
+            (oj.soni * (
+                SELECT j.narxi 
+                FROM joja j 
+                WHERE j.katak_id = oj.katak_id 
+                ORDER BY j.sana DESC 
+                LIMIT 1
+            )) AS summa,
             oj.izoh
         FROM 
             olgan_jojalar oj
-        LEFT JOIN 
-            joja j ON oj.katak_id = j.katak_id AND oj.sana = j.sana
         WHERE 
             oj.katak_id = $katakId
         ORDER BY 

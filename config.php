@@ -99,27 +99,39 @@ class Database{
         $jami_joja_soni = mysqli_fetch_assoc($this->query("
             SELECT SUM(soni) as jami_joja_soni FROM joja
         "))['jami_joja_soni'];
-
+        $jami_olgan_joja = mysqli_fetch_assoc($this->query("
+            SELECT SUM(soni) as jami_olgan_joja FROM olgan_jojalar
+        "))['jami_olgan_joja'];
+        $jojalar_data = mysqli_fetch_assoc($this->query("
+            SELECT 
+                (SELECT SUM(summa) FROM joja) AS jami_summa,
+                (SELECT narxi FROM joja ORDER BY id DESC LIMIT 1) AS oxirgi_narx;
+        "));
+        $jami_qoshilgan_joja_summa = $jojalar_data['jami_summa'];
+        $jami_qoshilgan_oxirgi_narx = $jojalar_data['oxirgi_narx'];
         $jami_mahsulot_summasi = mysqli_fetch_assoc($this->query("
             SELECT SUM(z.soni * m.narxi) AS jami_zahira_summa 
             FROM mahsulot_zahirasi z 
             JOIN mahsulotlar m ON z.mahsulot_id = m.id
         "))['jami_zahira_summa'];
-
+       
         $taminotchilar_balans = mysqli_fetch_assoc($this->query("
             SELECT SUM(balans) as jami_balans FROM taminotchilar
         "))['jami_balans'];
 
-        $mijozlar_balans = mysqli_fetch_assoc($this->query("
+        $mijozlar_balans = mysqli_fetch_assoc(result: $this->query("
             SELECT SUM(balans) as jami_balans FROM mijozlar
         "))['jami_balans'];
-
+        $jami_joja_summa = $jami_qoshilgan_joja_summa - $jami_qoshilgan_oxirgi_narx * $jami_olgan_joja;
+        $kapital_summa = $jami_mahsulot_summasi + $mijozlar_balans + $jami_joja_summa - $taminotchilar_balans;
         return [
             'kataklar_soni' => number_format($kataklar, 0, '.', ' '),
-            'jami_joja_soni' => number_format($jami_joja_soni ?? 0, 0, '.', ' '),
+            'jami_joja_soni' => number_format($jami_joja_soni - $jami_olgan_joja ?? 0, 0, '.', ' '),
             'jami_mahsulot_summasi' => number_format($jami_mahsulot_summasi ?? 0, 0, '.', ' '),
             'taminotchilar_balans' => number_format($taminotchilar_balans ?? 0, 0, '.', ' '),
-            'mijozlar_balans' => number_format($mijozlar_balans ?? 0, 0, '.', ' ')
+            'mijozlar_balans' => number_format($mijozlar_balans ?? 0, 0, '.', ' '),
+            'jami_joja_summa' => number_format($jami_joja_summa ?? 0, 0, '.', ' '),
+            'kapital_summa' => number_format($kapital_summa ?? 0, 0, '.', ' ')
         ];
     }
 

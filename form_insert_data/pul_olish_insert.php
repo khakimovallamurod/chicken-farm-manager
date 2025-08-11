@@ -24,7 +24,7 @@
 
     if ($insert) {
         $mijozlar_balans = $db->get_data_by_table('mijozlar', ['id'=>$mijoz_id]);
-        $db->update('mijozlar', ['balans'=>floatval($mijozlar_balans['balans'])-$summa]);
+        $db->update('mijozlar', ['balans'=>floatval($mijozlar_balans['balans'])-$summa], 'id = '.$mijoz_id);
         echo json_encode(['success' => true, 'message' => '✅ Pul muvaffaqiyatli qayd etildi.']);
     } else {
         echo json_encode(['success' => false, 'message' => '❌ Ma’lumotni qo‘shishda xatolik yuz berdi.']);

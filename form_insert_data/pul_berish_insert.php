@@ -27,7 +27,7 @@ include_once '../config.php';
 
     if ($insert) {
         $taminotchi_balans = $db->get_data_by_table('taminotchilar', ['id'=>$mijoz_id]);
-        $db->update('taminotchilar', ['balans'=>floatval($taminotchi_balans['balans'])-$summa]);
+        $db->update('taminotchilar', ['balans'=>floatval($taminotchi_balans['balans'])-$summa], 'id = '.$mijoz_id);
         echo json_encode(['success' => true, 'message' => '✅ Pul muvaffaqiyatli berildi.']);
     } else {
         echo json_encode(['success' => false, 'message' => '❌ Ma’lumotni qo‘shishda xatolik yuz berdi.']);

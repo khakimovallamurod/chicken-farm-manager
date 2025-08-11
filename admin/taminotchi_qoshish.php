@@ -44,11 +44,11 @@ $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_a
             </div>
             <div class="katak-info">
                 <div class="info-item">
-                    <div class="info-value">15</div> 
+                    <div class="info-value">0</div> 
                     <div class="info-label">Buyurtmalar</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-value"><?= htmlspecialchars($taminotchi['balans']) ?></div>
+                    <div class="info-value"><?= rtrim(rtrim(number_format($taminotchi['balans'], 2, '.', ' '), '0'), '.') ?></div>
                     <div class="info-label">balans</div>
                 </div>
             </div>
@@ -74,8 +74,8 @@ $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_a
                 <?php foreach ($taminotchilar as $taminotchi): ?>
                 <tr>
                     <td><?= htmlspecialchars($taminotchi['kompaniya_nomi']) ?></td>
-                    <td>15</td>
-                    <td><?= htmlspecialchars($taminotchi['balans']) ?></td>
+                    <td>0</td>
+                    <td><?= rtrim(rtrim(number_format($taminotchi['balans'], 2, '.', ' '), '0'), '.') ?></td>
                     <td><?= htmlspecialchars($taminotchi['fio']) ?></td>
                     <td><?= htmlspecialchars($taminotchi['mahsulotlar']) ?></td>
                     <td><?= htmlspecialchars($taminotchi['telefon']) ?></td>

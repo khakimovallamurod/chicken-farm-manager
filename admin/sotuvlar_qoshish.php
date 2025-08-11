@@ -106,8 +106,8 @@
                         <td><?= htmlspecialchars($sotuv['sana']) ?></td>
                         <td><?= htmlspecialchars($sotuv['mijoz_nomi']) ?></td>
                         <td><?= htmlspecialchars($sotuv['mijoz_tel']) ?></td>
-                        <td><?= htmlspecialchars($sotuv['balans']) ?></td>
-                        <td><?= htmlspecialchars($sotuv['summa']) ?></td>
+                        <td><?= rtrim(rtrim(number_format($sotuv['balans'], 2, '.', ' '), '0'), '.') ?></td>
+                        <td><?= rtrim(rtrim(number_format($sotuv['summa'], 2, '.', ' '), '0'), '.') ?></td>
                         <td><?= htmlspecialchars($sotuv['izoh']) ?></td>
                         <td>
                             <button class="btn btn-sm btn-outline-warning" title="Ko‘rish" onclick="viewDetailsSotuv(<?= $sotuv['id'] ?>)">

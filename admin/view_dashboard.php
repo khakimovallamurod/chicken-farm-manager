@@ -19,20 +19,28 @@
             <p>Jami jo'jalar</p>
         </div>
         <div class="stat-card">
+            <h3><?=$result['jami_joja_summa']?></h3>
+            <p>Jami jo'jalar summasi</p>
+        </div>
+        <div class="stat-card">
             <h3><?=$result['jami_mahsulot_summasi']?></h3>
             <p>Jami mahsulotlar summasi (so'm)</p>
+        </div>
+        <div class="stat-card">
+            <h3><?=$result['mijozlar_balans']?></h3>
+            <p>Jami mijozlar summasi (so'm)</p>
         </div>
         <div class="stat-card">
             <h3><?=$result['taminotchilar_balans']?></h3>
             <p>Jami taminotchilar summasi (so'm)</p>
         </div>
         <div class="stat-card">
-            <h3><?=$result['mijozlar_balans']?></h3>
-            <p>Jami mijozlar summasi (so'm)</p>
+            <h3><?=$result['kapital_summa']?></h3>
+            <p>Kapital summasi (so'm)</p>
         </div>
     </div>
 
-    <div class="table-container">
+    <!-- <div class="table-container">
         <table>
             <thead>
                 <tr>
@@ -67,5 +75,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </div> -->
 </section>

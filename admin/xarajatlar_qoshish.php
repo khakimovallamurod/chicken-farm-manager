@@ -93,7 +93,7 @@
                 <tr>
                     <td><?= htmlspecialchars($harajat_nomi) ?></td>
                     <td><?= htmlspecialchars($tolov_nomi) ?></td>
-                    <td><?= htmlspecialchars($harajat['miqdori']) ?></td>
+                    <td><?= rtrim(rtrim(number_format($harajat['miqdori'], 2, '.', ' '), '0'), '.') ?></td>
                     <td><?= htmlspecialchars($harajat['sana']) ?></td>
                     <td><?= htmlspecialchars($harajat['izoh']) ?></td>
                 </tr>

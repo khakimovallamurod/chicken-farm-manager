@@ -60,11 +60,11 @@
             </div>
             <div class="katak-info">
                 <div class="info-item">
-                    <div class="info-value"><?= $mahsulot['soni'] ?></div>
+                    <div class="info-value"><td><?= rtrim(rtrim(number_format($mahsulot['soni'], 2, '.', ' '), '0'), '.')?></td></div>
                     <div class="info-label"><?= $mahsulot['birlik_nomi'] ?></div>
                 </div>
                 <div class="info-item">
-                    <div class="info-value"><?= $mahsulot['narxi'] ?></div>
+                    <div class="info-value"><td><?= rtrim(rtrim(number_format($mahsulot['narxi'], 2, '.', ' '), '0'), '.')?></td></div>
                     <div class="info-label">so'm/<?= $mahsulot['birlik_nomi'] ?></div>
                 </div>
             </div>
@@ -94,9 +94,9 @@
                 <tr>
                     <td><?= $m['nomi'] ?></td>
                     <td><?= $m['categoriya_nomi'] ?></td>
-                    <td><?= $m['soni'] ?></td>
+                    <td><?= rtrim(rtrim(number_format($m['soni'], 2, '.', ' '), '0'), '.')?></td>
                     <td><?= $m['birlik_nomi'] ?></td>
-                    <td><?= $m['narxi'] ?></td>
+                    <td><?= rtrim(rtrim(number_format($m['narxi'], 2, '.', ' '), '0'), '.')?></td>
                     <td><?= $m['tavsif'] ?></td>
                     <td>
                         <button class="btn btn-primary" onclick="editMahsulot(1)">✏️</button>

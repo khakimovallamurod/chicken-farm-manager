@@ -102,10 +102,10 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
                     <tr>
                         <td><?=$kirim['fio']?></td>
                         <td><?=$kirim['kompaniya_nomi']?></td>
-                        <td><?=$kirim['balans']?></td>
+                        <td><?= rtrim(rtrim(number_format($kirim['balans'], 2, '.', ' '), '0'), '.') ?></td>
                         <td><?=$kirim['telefon']?></td>
                         <td><?=$kirim['sana']?></td>                        
-                        <td><?=$kirim['summa']?></td>                        
+                        <td><?= rtrim(rtrim(number_format($kirim['summa'], 2, '.', ' '), '0'), '.') ?></td>
                         <td><?=$kirim['izoh']?></td> 
                         <td>
                             <button class="btn btn-sm btn-outline-warning" title="Ko'rish" onclick="viewDetailsKirim(<?= $kirim['id'] ?>)">
@@ -178,14 +178,14 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${item.soni}</td>
-                        <td>${item.narxi}</td>
-                        <td>${item.summa} so'm</td>
+                        <td>${narxi.toLocaleString('uz-UZ')}</td>
+                        <td>${summa.toLocaleString('uz-UZ')} so'm</td>
                     `;
                     tbody.appendChild(row);
                 });
 
                 document.getElementById('kirimJamiRow').innerHTML = `
-                    <strong>Jami summa: ${total} so'm</strong>
+                    <strong>Jami summa: ${total.toLocaleString('uz-UZ')} so'm</strong>
                 `;
 
                 setTimeout(() => {

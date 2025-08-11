@@ -2,7 +2,7 @@
     <div class="section-header">
         <h2 class="section-title">👨‍💼 Mijoz qo'shish</h2>
         <div style="margin-top: 1rem;">
-            <button id="    " class="btn btn-outline-success">📋 Jadval ko‘rinishini ko‘rsatish</button>
+            <button id="toggleMijozViewBtn" class="btn btn-outline-success">📋 Jadval ko‘rinishini ko‘rsatish</button>
         </div>
     </div>
     <div id="mijozFormSection">
@@ -51,7 +51,7 @@
                 <?php foreach ($kataklar as $katak): ?>
                     <tr>
                         <td><?=$katak['mijoz_nomi']?></td>
-                        <td><?=$katak['balans']?></td>
+                        <td><?=rtrim(rtrim(number_format($katak['balans'], 2, '.', ' '), '0'), '.')?></td>
                         <td><?=$katak['mijoz_tel']?></td>
                         <td><?=$katak['mijoz_address']?></td>
                         <td><?=$katak['created_at']?></td>                        

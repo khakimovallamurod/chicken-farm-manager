@@ -41,7 +41,8 @@
                             CASE WHEN k.status = 'active' THEN 0 ELSE 1 END,
                             k.created_at DESC;
                         ";
-                    
+            $query_last_price = "SELECT narxi FROM joja ORDER BY sana DESC LIMIT 1;";
+            $last_price = floatval(mysqli_fetch_assoc($db->query($query_last_price))['narxi']);   
             $kataklar = $db->query($query);
             while ($katak = mysqli_fetch_assoc($kataklar)) {
                 $today = new DateTime();
@@ -71,6 +72,22 @@
                     <div class="info-item">
                         <div class="info-value"><?=$days?></div>
                         <div class="info-label">Kun</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value"><?=$katak['umumiy_joja']*$last_price?></div>
+                        <div class="info-label">Jami joja summasi</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value"><?=$katak['joja_soni']*$last_price?></div>
+                        <div class="info-label">Jami qolgan joja summasi</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value"><?=$katak['olgan_joja']*$last_price?></div>
+                        <div class="info-label">Jami olgan joja summasi</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value"><?=$katak['olgan_joja']*$last_price?></div>
+                        <div class="info-label">Jami olgan joja summasi</div>
                     </div>
                 </div>
                 <p><?=$katak['izoh']?></p>
@@ -259,9 +276,9 @@
                         <th>№</th>
                         <th>Sana</th>
                         <th>O'lgan jo'jalar soni</th>
-                        <th>Izoh</th>
                         <th>Narxi (so'm)</th>
                         <th>Summa (so'm)</th>
+                        <th>Izoh</th>
                     </tr>
                 </thead>
                 <tbody id="olganTarixiTableBody">
@@ -628,9 +645,9 @@
                             <td>${index + 1}</td>
                             <td>${formatDate(item.sana)}</td>
                             <td><strong style="color: #dc3545;">${soni}</strong></td>
-                            <td>${item.izoh || '-'}</td>
                             <td>${narxi.toFixed(0)} so'm</td>
                             <td><strong style="color: green;">${summa.toFixed(0)} so'm</strong></td>
+                            <td>${item.izoh || '-'}</td>
                         </tr>
                     `;
                 });
@@ -639,11 +656,11 @@
                     <tr style="background-color: #f8d7da; font-weight: bold;">
                         <td colspan="2">JAMI O'LGAN:</td>
                         <td><strong style="color: #dc3545;">${totalOlgan}</strong></td>
-                        <td colspan="2">-</td>
+                        <td colspan="1">-</td>
                         <td><strong style="color: green;">${totalSumma.toFixed(0)} so'm</strong></td>
+                        <td colspan="1">-</td>
                     </tr>
                 `;
-
                 document.getElementById('olganTarixiTableBody').innerHTML = html;
             } else {
                 document.getElementById('olganTarixiEmpty').style.display = 'block';
