@@ -49,24 +49,25 @@ class Database{
             return $data;
         }
     public function insert($table, $arr){
-            $sql = "INSERT INTO ".$table. " ";
-            $t1 = '';
-            $t2 = '';
-            $i = 0;
-            $n = count($arr);
-            foreach($arr as $key=>$val){
-                $i++;
-                if($i==$n){
-                    $t1 .= $key;
-                    $t2 .= "'".$val."'";
-                }else{
-                    $t1 .= $key.', ';
-                    $t2 .= "'".$val."', ";
-                }
+        $sql = "INSERT INTO ".$table. " ";
+        $t1 = '';
+        $t2 = '';
+        $i = 0;
+        $n = count($arr);
+        foreach($arr as $key=>$val){
+            $val = mysqli_real_escape_string($this->link, $val);
+            $i++;
+            if($i==$n){
+                $t1 .= $key;
+                $t2 .= "'".$val."'";
+            }else{
+                $t1 .= $key.', ';
+                $t2 .= "'".$val."', ";
             }
-            $sql .= "($t1) VALUES ($t2);";
-            return $this -> query($sql);
         }
+        $sql .= "($t1) VALUES ($t2);";
+        return $this->query($sql);
+    }
     public function update($table, $arr, $con = 'no'){
             $sql = "UPDATE ".$table. " SET ";
             $t = '';

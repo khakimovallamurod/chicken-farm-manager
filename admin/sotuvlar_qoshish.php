@@ -86,6 +86,26 @@
     ?>                            
     <div class="table-container" id="sotuvTableSection" style="display: none;">
         <h3 class="mb-3">So'nggi sotishlar</h3>
+        <div class="filter-section">
+            <div class="row align-items-end">
+                <div class="col-md-4 mb-3">
+                    <label for="min-date" class="form-label">
+                        <i class="fas fa-calendar-alt me-1"></i>Boshlanish sanasi
+                    </label>
+                    <input type="date"  id="startDate_sotuv" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="max-date" class="form-label">
+                        <i class="fas fa-calendar-check me-1"></i>Tugash sanasi
+                    </label>
+                    <input type="date" id="endDate_sotuv"  class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="filterByDate_sotuv" class="btn-professional btn-info">🔍 Filterlash</button>
+                    <button id="clearFilter_sotuv" class="btn-professional btn-secondary">❌ Tozalash</button>
+                </div>
+            </div>
+        </div>
         <table id="sotuvTable" class="table table-bordered table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -241,11 +261,51 @@
         }
     }
     $(document).ready(function() {
-        $('#sotuvTable').DataTable({
+        var table_sotuv = $('#sotuvTable').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/uz.json' 
+                "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
+                "zeroRecords": "Hech qanday ma'lumot topilmadi",
+                "info": "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                "infoEmpty": "Ma'lumot yo‘q",
+                "infoFiltered": "(_MAX_ ta umumiy yozuvdan filtrlandi)",
+                "search": "Qidiruv:",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
+                }
             }
         });
+        function filterByDateRangeSotuv(settings, data, dataIndex) {
+            var start = $('#startDate_sotuv').val();
+            var end = $('#endDate_sotuv').val();
+            var dateStr = data[1]; 
+
+            if (!start && !end) {
+                return true;
+            }
+            var parts = dateStr.split('.');
+            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+            var rowDate = new Date(convertedDate);
+            if (start) start = new Date(start);
+            if (end) end = new Date(end);
+
+            return (!start || rowDate >= start) && (!end || rowDate <= end);
+        }
+
+        $('#filterByDate_sotuv').on('click', function () {
+            $.fn.dataTable.ext.search = []; 
+            $.fn.dataTable.ext.search.push(filterByDateRangeSotuv);
+            table_sotuv.draw();
+        });
+
+        $('#clearFilter_sotuv').on('click', function () {
+            $('#startDate_sotuv').val('');
+            $('#endDate_sotuv').val('');
+            $.fn.dataTable.ext.search = []; 
+            table_sotuv.draw();
+        }); 
     });
     const toggleSotuvViewBtn = document.getElementById('toggleSotuvViewBtn');
     const goshtSotishForm = document.getElementById('goshtSotishForm');

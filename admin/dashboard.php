@@ -17,7 +17,6 @@ if (!isset($_SESSION['login'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/yem_berish_style.css">
     <style>        
-        /* ❌ Olib tashlash tugmasi uchun maxsus stil */
         .remove-btn {
             background-color: #e74c3c;
             color: white;
@@ -255,93 +254,8 @@ if (!isset($_SESSION['login'])) {
             <?php include_once 'pul_berish_qoshish.php'?>
             
             <!-- Hisobotlar -->
-            <section id="hisobot" class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">📈 Hisobotlar</h2>
-                </div>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Hisobot turi:</label>
-                        <select id="report_type" onchange="generateReport()">
-                            <option value="">Hisobot turini tanlang</option>
-                            <option value="oylik">Oylik hisobot</option>
-                            <option value="kataklar">Kataklar bo'yicha</option>
-                            <option value="moliyaviy">Moliyaviy hisobot</option>
-                            <option value="qarzlar">Qarzlar hisoboti</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Boshlanish sanasi:</label>
-                        <input type="date" id="report_start">
-                    </div>
-                    <div class="form-group">
-                        <label>Tugash sanasi:</label>
-                        <input type="date" id="report_end">
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>32,500,000</h3>
-                        <p>Umumiy daromad (so'm)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>15,200,000</h3>
-                        <p>Umumiy xarajat (so'm)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>17,300,000</h3>
-                        <p>Sof foyda (so'm)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>5,100,000</h3>
-                        <p>Qarzda qolgan (so'm)</p>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <h3>Oylik ko'rsatkichlar</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Oy</th>
-                                <th>Sotilgan go'sht (kg)</th>
-                                <th>Daromad</th>
-                                <th>Xarajat</th>
-                                <th>Foyda</th>
-                                <th>Rentabellik</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024 Yanvar</td>
-                                <td>1,250</td>
-                                <td>45,000,000</td>
-                                <td>25,000,000</td>
-                                <td>20,000,000</td>
-                                <td style="color: #27ae60; font-weight: bold;">80%</td>
-                            </tr>
-                            <tr>
-                                <td>2023 Dekabr</td>
-                                <td>1,180</td>
-                                <td>42,500,000</td>
-                                <td>23,500,000</td>
-                                <td>19,000,000</td>
-                                <td style="color: #27ae60; font-weight: bold;">81%</td>
-                            </tr>
-                            <tr>
-                                <td>2023 Noyabr</td>
-                                <td>1,350</td>
-                                <td>48,000,000</td>
-                                <td>27,000,000</td>
-                                <td>21,000,000</td>
-                                <td style="color: #27ae60; font-weight: bold;">78%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            <?php include_once 'pl_dashboard.php'?>
+            
         </main>
     </div>
 

@@ -55,7 +55,26 @@ $kataklar = $db->get_data_by_table_all('kataklar');
         <h3 class="table-title mb-3">
             <i class="fas fa-skull-crossbones me-2 text-danger"></i>O'lgan jo'jalar ro'yxati
         </h3>
-
+        <div class="filter-section">
+            <div class="row align-items-end">
+                <div class="col-md-4 mb-3">
+                    <label for="min-date" class="form-label">
+                        <i class="fas fa-calendar-alt me-1"></i>Boshlanish sanasi
+                    </label>
+                    <input type="date"  id="startDate_kill" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="max-date" class="form-label">
+                        <i class="fas fa-calendar-check me-1"></i>Tugash sanasi
+                    </label>
+                    <input type="date" id="endDate_kill"  class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="filterByDate_kill" class="btn-professional btn-info">🔍 Filterlash</button>
+                    <button id="clearFilter_kill" class="btn-professional btn-secondary">❌ Tozalash</button>
+                </div>
+            </div>
+        </div>                    
         <div class="table-responsive">
             <table id="olganJojalarTable" class="table table-bordered table-hover align-middle text-center">
                 <thead class="table-secondary">
@@ -104,9 +123,8 @@ $kataklar = $db->get_data_by_table_all('kataklar');
             : '📋 Jadval ko‘rinishini ko‘rsatish';
     });
     $(document).ready(function () {
-        $('#olganJojalarTable').DataTable({
-            responsive: true,
-            order: [[2, 'desc']], // O'lgan sana bo'yicha kamayish
+        var table_killed = $('#olganJojalarTable').DataTable({
+            order: [[2, 'desc']], 
             language: {
                 search: "Qidiruv:",
                 lengthMenu: "Har sahifada _MENU_ ta yozuv ko‘rsatiladi",
@@ -122,6 +140,35 @@ $kataklar = $db->get_data_by_table_all('kataklar');
                 infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
             }
         });
+        function filterByDateRangeKilled(settings, data, dataIndex) {
+            var start = $('#startDate_kill').val();
+            var end = $('#endDate_kill').val();
+            var dateStr = data[2]; 
+
+            if (!start && !end) {
+                return true;
+            }
+            var parts = dateStr.split('.');
+            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+            var rowDate = new Date(convertedDate);
+            if (start) start = new Date(start);
+            if (end) end = new Date(end);
+
+            return (!start || rowDate >= start) && (!end || rowDate <= end);
+        }
+
+        $('#filterByDate_kill').on('click', function () {
+            $.fn.dataTable.ext.search = []; 
+            $.fn.dataTable.ext.search.push(filterByDateRangeKilled);
+            table_killed.draw();
+        });
+
+        $('#clearFilter_kill').on('click', function () {
+            $('#startDate_kill').val('');
+            $('#endDate_kill').val('');
+            $.fn.dataTable.ext.search = []; 
+            table_killed.draw();
+        });        
     });
     function addOlganJoja(event) {
         event.preventDefault();

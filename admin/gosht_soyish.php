@@ -60,6 +60,26 @@
             <h3 class="table-title">
                 <i class="fas fa-list-alt me-2"></i>So'nggi topshirishlar
             </h3>
+            <div class="filter-section">
+                <div class="row align-items-end">
+                    <div class="col-md-4 mb-3">
+                        <label for="min-date" class="form-label">
+                            <i class="fas fa-calendar-alt me-1"></i>Boshlanish sanasi
+                        </label>
+                        <input type="date"  id="startDate_meal" class="form-control">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="max-date" class="form-label">
+                            <i class="fas fa-calendar-check me-1"></i>Tugash sanasi
+                        </label>
+                        <input type="date" id="endDate_meal"  class="form-control">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button id="filterByDate_meal" class="btn-professional btn-info">🔍 Filterlash</button>
+                        <button id="clearFilter_meal" class="btn-professional btn-secondary">❌ Tozalash</button>
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table id="topshirishlarTable" class="table table-hover align-middle text-center">
                     <thead>
@@ -180,10 +200,7 @@
             </form>
         </div>
     </div>
-   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+   
     <script>
         const toggleGoshtBtn = document.getElementById('toggleGoshtViewBtn');
         const goshtFormSection = document.getElementById('goshtFormSection');
@@ -200,7 +217,7 @@
                 : '📋 Jadval ko‘rinishini ko‘rsatish';
         });
         $(document).ready(function () {
-            $('#topshirishlarTable').DataTable({
+            var table_meal = $('#topshirishlarTable').DataTable({
                 responsive: true,
                 order: [[2, 'desc']], 
                 language: {
@@ -218,6 +235,34 @@
                     infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
                 }
             });
+            function filterByDateRangeMeal(settings, data, dataIndex) {
+                var start = $('#startDate_meal').val();
+                var end = $('#endDate_meal').val();
+                var dateStr = data[3]; 
+                if (!start && !end) {
+                    return true;
+                }
+                var parts = dateStr.split('.');
+                var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0]; 
+                var rowDate = new Date(convertedDate);
+                if (start) start = new Date(start);
+                if (end) end = new Date(end);
+
+                return (!start || rowDate >= start) && (!end || rowDate <= end);
+            }
+
+            $('#filterByDate_meal').on('click', function () {
+                $.fn.dataTable.ext.search = []; 
+                $.fn.dataTable.ext.search.push(filterByDateRangeMeal);
+                table_meal.draw();
+            });
+
+            $('#clearFilter_meal').on('click', function () {
+                $('#startDate_meal').val('');
+                $('#endDate_meal').val('');
+                $.fn.dataTable.ext.search = []; 
+                table_meal.draw();
+            });        
         });
         
         $('#historyTable').DataTable({

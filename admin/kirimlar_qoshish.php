@@ -84,6 +84,26 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
     ?>
     <div class="table-container" id="kirimTableSection" style="display: none;">
         <h3>Kirimlar ro'yxati</h3>
+        <div class="filter-section">
+            <div class="row align-items-end">
+                <div class="col-md-4 mb-3">
+                    <label for="min-date" class="form-label">
+                        <i class="fas fa-calendar-alt me-1"></i>Boshlanish sanasi
+                    </label>
+                    <input type="date"  id="startDate_kirimadd" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="max-date" class="form-label">
+                        <i class="fas fa-calendar-check me-1"></i>Tugash sanasi
+                    </label>
+                    <input type="date" id="endDate_kirimadd"  class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="filterByDate_kirimadd" class="btn-professional btn-info">🔍 Filterlash</button>
+                    <button id="clearFilter_kirimadd" class="btn-professional btn-secondary">❌ Tozalash</button>
+                </div>
+            </div>
+        </div>
         <table id="kirimTable" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
@@ -173,7 +193,11 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
 
             if (records.length > 0) {
                 records.forEach((item, index) => {
-                    total += parseFloat(item.summa);
+                    const narxi = parseFloat(item.narxi) || 0;
+                    const summa = parseFloat(item.summa) || 0;
+
+                    total += summa;
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${index + 1}</td>
@@ -183,7 +207,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
                     `;
                     tbody.appendChild(row);
                 });
-
                 document.getElementById('kirimJamiRow').innerHTML = `
                     <strong>Jami summa: ${total.toLocaleString('uz-UZ')} so'm</strong>
                 `;
@@ -227,11 +250,51 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
     }
 
     $(document).ready(function() {
-        $('#kirimTable').DataTable({
+        var table_kirimadd = $('#kirimTable').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/uz.json' 
+                "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
+                "zeroRecords": "Hech qanday ma'lumot topilmadi",
+                "info": "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                "infoEmpty": "Ma'lumot yo‘q",
+                "infoFiltered": "(_MAX_ ta umumiy yozuvdan filtrlandi)",
+                "search": "Qidiruv:",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
+                }
             }
         });
+        function filterByDateRangeKirim(settings, data, dataIndex) {
+            var start = $('#startDate_kirimadd').val();
+            var end = $('#endDate_kirimadd').val();
+            var dateStr = data[4]; 
+
+            if (!start && !end) {
+                return true;
+            }
+            var parts = dateStr.split('.');
+            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+            var rowDate = new Date(convertedDate);
+            if (start) start = new Date(start);
+            if (end) end = new Date(end);
+
+            return (!start || rowDate >= start) && (!end || rowDate <= end);
+        }
+
+        $('#filterByDate_kirimadd').on('click', function () {
+            $.fn.dataTable.ext.search = []; 
+            $.fn.dataTable.ext.search.push(filterByDateRangeKirim);
+            table_kirimadd.draw();
+        });
+
+        $('#clearFilter_kirimadd').on('click', function () {
+            $('#startDate_kirimadd').val('');
+            $('#endDate_kirimadd').val('');
+            $.fn.dataTable.ext.search = []; 
+            table_kirimadd.draw();
+        });      
     });
     const toggleKirimViewBtn = document.getElementById('toggleKirimViewBtn');
     const kirimForm = document.getElementById('kirimForm');
@@ -291,7 +354,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
             return;
         }
         
-        // Kamida bitta qator qolishi kerak
         if (wrapper.children.length > 1) {
             productRow.remove();
         } else {
@@ -299,12 +361,11 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         }
     }
     function addKirim(event) {
-        event.preventDefault(); // Sahifa yangilanmasin
+        event.preventDefault();
         const taminotchi_id = $('#kirim_taminotchi').val();
         const sana = $('#kirim_sana').val();
         const izoh = $('#kirim_izoh').val();
 
-        // Mahsulotlar ro'yxati
         const mahsulotlar = [];
         $('#kirim-mahsulotlar-wrapper .product-row').each(function () {
             const kategoriya = $(this).find('select[name="kategoriya[]"]').val();
@@ -321,7 +382,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         });
 
         const total_summa = mahsulotlar.reduce((acc, item) => acc + item.summa, 0);
-
         const kirimData = {
             taminotchi_id: taminotchi_id,
             sana: sana,

@@ -62,13 +62,13 @@
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
-                    <h2>TOVIQ haqida</h2>
+                    <h2>TOVUQ haqida</h2>
                     <p>Biz professional biznes yechimlari va innovatsion xizmatlar bilan shug'ullanamiz. Bizning maqsadimiz - sizning biznesingizni yangi bosqichga olib chiqish va muvaffaqiyat sari yo'l ochish.</p>
                     <p>Tajribali jamoa va zamonaviy yondashuvlar bilan biz har bir mijozimizga individual yechimlar taklif qilamiz.</p>
                     <a href="#contact" class="btn btn-register">Biz bilan bog'laning</a>
                 </div>
                 <div class="about-image">
-                    TOVIQ
+                    TOVUQ
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>TOVIQ</h3>
+                    <h3>TOVUQ</h3>
                     <p>Professional biznes yechimlari va innovatsion xizmatlar</p>
                 </div>
                 <div class="footer-section">
@@ -96,7 +96,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 TOVIQ. Barcha huquqlar himoyalangan.</p>
+                <p>&copy; 2025 TOVUQ. Barcha huquqlar himoyalangan.</p>
             </div>
         </div>
     </footer>

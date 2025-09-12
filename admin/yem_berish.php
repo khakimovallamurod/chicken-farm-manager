@@ -13,7 +13,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
         </div>
     </div>
 
-    <!-- FORM KO‘RINISHI -->
     <div id="yemFormSection">
         <form id="yemForm" onsubmit="addYem(event)">
             <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
@@ -67,22 +66,20 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
                     <label for="min-date" class="form-label">
                         <i class="fas fa-calendar-alt me-1"></i>Boshlanish sanasi
                     </label>
-                    <input type="date" id="min-date" class="form-control">
+                    <input type="date"  id="startDate_yem" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="max-date" class="form-label">
                         <i class="fas fa-calendar-check me-1"></i>Tugash sanasi
                     </label>
-                    <input type="date" id="max-date" class="form-control">
+                    <input type="date" id="endDate_yem"  class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <button id="clear-dates" type="button" class="btn btn-clear">
-                        <i class="fas fa-eraser me-1"></i>Tozalash
-                    </button>
+                    <button id="filterByDate_yem" class="btn-professional btn-info">🔍 Filterlash</button>
+                    <button id="clearFilter_yem" class="btn-professional btn-secondary">❌ Tozalash</button>
                 </div>
             </div>
         </div>
-
         <div class="table-responsive">
             <table id="yemBerishTable" class="table table-hover">
                 <thead>
@@ -119,12 +116,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
     </div>
 </section>
 
-
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
 <script>
     const toggleYemBtn = document.getElementById('toggleYemViewBtn');
     const yemFormSection = document.getElementById('yemFormSection');
@@ -140,70 +131,52 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
             ? '➕ Forma ko‘rinishini ko‘rsatish' 
             : '📋 Jadval ko‘rinishini ko‘rsatish';
     });
-   $(document).ready(function() {
-        $.fn.dataTable.moment('DD.MM.YYYY');
-        
-        var table = $('#yemBerishTable').DataTable({
+    $(document).ready(function() {
+        var table_yem = $('#yemBerishTable').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/uz.json'
-            },
-            pageLength: 10,
-            order: [[3, 'desc']],
-            responsive: true,
-            dom: '<"top"lf>rt<"bottom"ip>',
-            columnDefs: [
-                { 
-                    targets: 3, 
-                    type: 'date', 
-                    render: function(data, type, row) {
-                        if (type === 'display') {
-                            return moment(data, 'YYYY-MM-DD').format('DD.MM.YYYY');
-                        }
-                        return data;
-                    }
+                "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
+                "zeroRecords": "Hech qanday ma'lumot topilmadi",
+                "info": "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                "infoEmpty": "Ma'lumot yo‘q",
+                "infoFiltered": "(_MAX_ ta umumiy yozuvdan filtrlandi)",
+                "search": "Qidiruv:",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
                 }
-            ]
+            }
         });
+        function filterByDateRangeYem(settings, data, dataIndex) {
+            var start = $('#startDate_yem').val();
+            var end = $('#endDate_yem').val();
+            var dateStr = data[3]; 
 
-        $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex) {
-                var min = $('#min-date').val();
-                var max = $('#max-date').val();
-                if (!min && !max) {
-                    return true;
-                }
-                
-                var rowDateStr = table.row(dataIndex).data()[3];
-                
-                if (!rowDateStr) {
-                    return false;
-                }
-                
-                var rowDate = new Date(rowDateStr);
-                var minDate = min ? new Date(min) : null;
-                var maxDate = max ? new Date(max) : null;
-                
-                // Filter qo'llash
-                if (minDate && maxDate) {
-                    return rowDate >= minDate && rowDate <= maxDate;
-                } else if (minDate) {
-                    return rowDate >= minDate;
-                } else if (maxDate) {
-                    return rowDate <= maxDate;
-                }
-                
+            if (!start && !end) {
                 return true;
             }
-        );
+            var parts = dateStr.split('.');
+            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+            var rowDate = new Date(convertedDate);
+            if (start) start = new Date(start);
+            if (end) end = new Date(end);
 
-        $('#min-date, #max-date').on('change', function() {
-            table.draw();
+            return (!start || rowDate >= start) && (!end || rowDate <= end);
+        }
+
+        $('#filterByDate_yem').on('click', function () {
+            $.fn.dataTable.ext.search = []; 
+            $.fn.dataTable.ext.search.push(filterByDateRangeYem);
+            table_yem.draw();
         });
 
-        $('#clear-dates').on('click', function() {
-            $('#min-date, #max-date').val('');
-            table.draw();
-        });
+        $('#clearFilter_yem').on('click', function () {
+            $('#startDate_yem').val('');
+            $('#endDate_yem').val('');
+            $.fn.dataTable.ext.search = []; 
+            table_yem.draw();
+        });        
     });
 
     var jq = $.noConflict();

@@ -1,3 +1,4 @@
+
 <section id="mijozqoshish" class="content-section">
     <div class="section-header">
         <h2 class="section-title">👨‍💼 Mijoz qo'shish</h2>
@@ -36,6 +37,26 @@
     ?>
     <div class="table-container" id="mijozTableSection" style="display: none;">
         <h3>Mijozlar ro'yxati</h3>
+        <div class="filter-section">
+            <div class="row align-items-end">
+                <div class="col-md-4 mb-3">
+                    <label for="min-date" class="form-label">
+                        <i class="fas fa-calendar-alt me-1"></i>Boshlanish sanasi
+                    </label>
+                    <input type="date"  id="startDate" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="max-date" class="form-label">
+                        <i class="fas fa-calendar-check me-1"></i>Tugash sanasi
+                    </label>
+                    <input type="date" id="endDate"  class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="filterByDate" class="btn-professional btn-info me-2">🔍 Filterlash</button>
+                    <button id="clearFilter" class="btn-professional btn-secondary">❌ Tozalash</button>
+                </div>
+            </div>
+        </div>
         <table id="mijozlarTable" class="display table table-bordered table-hover align-middle text-center">
             <thead>
                 <tr>
@@ -54,7 +75,7 @@
                         <td><?=rtrim(rtrim(number_format($katak['balans'], 2, '.', ' '), '0'), '.')?></td>
                         <td><?=$katak['mijoz_tel']?></td>
                         <td><?=$katak['mijoz_address']?></td>
-                        <td><?=$katak['created_at']?></td>                        
+                        <td><?= date('Y-m-d', strtotime($katak['created_at'])) ?></td>                        
                         <td><?=$katak['mijoz_izoh']?></td>                        
                     </tr>
                 <?php endforeach; ?>
@@ -65,22 +86,21 @@
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
 <script>
-    const toggleMijoznBtn = document.getElementById('toggleMijozViewBtn');
-    const mijozFormSection = document.getElementById('mijozFormSection');
-    const mijozTableSection = document.getElementById('mijozTableSection');
+    $(document).ready(function () {
+        const toggleMijoznBtn = $('#toggleMijozViewBtn');
+        const mijozFormSection = $('#mijozFormSection');
+        const mijozTableSection = $('#mijozTableSection');
 
-    toggleMijoznBtn.addEventListener('click', () => {
-        const isFormVisible = mijozFormSection.style.display !== 'none';
+        toggleMijoznBtn.on('click', function () {
+            const isFormVisible = mijozFormSection.is(':visible');
+            mijozFormSection.toggle(!isFormVisible);
+            mijozTableSection.toggle(isFormVisible);
+            toggleMijoznBtn.html(isFormVisible 
+                ? '➕ Forma ko‘rinishini ko‘rsatish' 
+                : '📋 Jadval ko‘rinishini ko‘rsatish');
+        });
 
-        mijozFormSection.style.display = isFormVisible ? 'none' : 'block';
-        mijozTableSection.style.display = isFormVisible ? 'block' : 'none';
-
-        toggleMijoznBtn.innerHTML = isFormVisible 
-            ? '➕ Forma ko‘rinishini ko‘rsatish' 
-            : '📋 Jadval ko‘rinishini ko‘rsatish';
-    });
-    $(document).ready(function() {
-        $('#mijozlarTable').DataTable({
+        var table = $('#mijozlarTable').DataTable({
             language: {
                 "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
                 "zeroRecords": "Hech qanday ma'lumot topilmadi",
@@ -96,44 +116,70 @@
                 }
             }
         });
-    });
-    function addMijozQoshish(event) {
-        event.preventDefault();
-        const ismi = $('#mijoz_ismi').val();
-        const telefon = $('#mijoz_telefon').val();
-        const manzil = $('#mijoz_manzil').val();
-        const izoh = $('#mijoz_izoh').val();
 
-        const data = {
-            ismi: ismi,
-            telefon: telefon,
-            manzil: manzil,
-            izoh: izoh
-        };
-        console.log(data);
-        $.ajax({
-            url: '../form_insert_data/add_mijoz.php',
-            type: 'POST',
-            data: JSON.stringify(data),
-            contentType: 'application/json',
-            dataType: 'json',
-            success: function(result) {
-                if (result.success) {
-                    showAlert(result.message, 'success');
-                    $('#mijozQoshishForm')[0].reset();
-                } else {
-                    showAlert(result.message, 'error');
-                    $('#mijozQoshishForm')[0].reset();
-                }
-            },
-            error: function(xhr, status, error) {
-                swal({
-                    title: "Xatolik!",
-                    text: "Server bilan bog'lanishda xatolik yuz berdi.",
-                    icon: "error",
-                    button: "OK",
-                });
+        function filterByDateRange(settings, data, dataIndex) {
+            var start = $('#startDate').val();
+            var end = $('#endDate').val();
+            var dateStr = data[4]; 
+
+            if (!start && !end) {
+                return true;
             }
+            var parts = dateStr.split('.');
+            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+            var rowDate = new Date(convertedDate);
+            if (start) start = new Date(start);
+            if (end) end = new Date(end);
+
+            return (!start || rowDate >= start) && (!end || rowDate <= end);
+        }
+
+        $('#filterByDate').on('click', function () {
+            $.fn.dataTable.ext.search = []; 
+            $.fn.dataTable.ext.search.push(filterByDateRange);
+            table.draw();
         });
-    }
+
+        $('#clearFilter').on('click', function () {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $.fn.dataTable.ext.search = []; 
+            table.draw();
+        });
+
+        $('#mijozQoshishForm').on('submit', function (event) {
+            event.preventDefault();
+            const data = {
+                ismi: $('#mijoz_ismi').val(),
+                telefon: $('#mijoz_telefon').val(),
+                manzil: $('#mijoz_manzil').val(),
+                izoh: $('#mijoz_izoh').val()
+            };
+            
+            $.ajax({
+                url: '../form_insert_data/add_mijoz.php',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        showAlert(result.message, 'success');
+                    } else {
+                        showAlert(result.message, 'error');
+                    }
+                    $('#mijozQoshishForm')[0].reset();
+                },
+                error: function () {
+                    swal({
+                        title: "Xatolik!",
+                        text: "Server bilan bog'lanishda xatolik yuz berdi.",
+                        icon: "error",
+                        button: "OK",
+                    });
+                }
+            });
+        });
+    });
+
 </script>
