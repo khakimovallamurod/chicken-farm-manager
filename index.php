@@ -95,9 +95,6 @@
                     <a href="#">Analitika</a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 TOVUQ. Barcha huquqlar himoyalangan.</p>
-            </div>
         </div>
     </footer>
     <script src="assets/js/home_script.js"></script>

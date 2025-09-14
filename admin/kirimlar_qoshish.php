@@ -9,7 +9,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
     <div class="section-header">
         <h2 class="section-title">📥 Kirimlar</h2>
         <div style="margin-top: 1rem;">
-            <button id="toggleKirimViewBtn" class="btn btn-outline-success">📋 Jadval ko‘rinishini ko‘rsatish</button>
+            <button id="toggleKirimViewBtn"  class="expense-btn">📋 Jadval ko‘rinishini ko‘rsatish</button>
         </div>
     </div>
     <form id="kirimForm" onsubmit="addKirim(event)">
@@ -65,23 +65,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         </div>
         <button type="submit" class="btn btn-success">📥 Kirim qo'shish</button>
     </form>
-    <?php
-        include_once '../config.php';
-        $db = new Database();
-        $query = "SELECT 
-            k.id,
-            k.sana,
-            k.summa,
-            k.izoh,
-            t.kompaniya_nomi,
-            t.fio,
-            t.telefon,
-            t.balans
-        FROM kirimlar k
-        LEFT JOIN taminotchilar t ON k.taminotchi_id = t.id ORDER BY k.sana DESC;";
-        $kirimlar = $db->query($query);
-
-    ?>
+    
     <div class="table-container" id="kirimTableSection" style="display: none;">
         <h3>Kirimlar ro'yxati</h3>
         <div class="filter-section">
@@ -104,38 +88,9 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
                 </div>
             </div>
         </div>
-        <table id="kirimTable" class="table table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>FIO</th>
-                    <th>Kompaniya Nomi</th>
-                    <th>Balans</th>
-                    <th>Telafon raqam</th>
-                    <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
-                    <th>Summa</th>
-                    <th>Izoh</th>
-                    <th>Ko'rish</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($kirim =  mysqli_fetch_assoc($kirimlar)){ ?>
-                    <tr>
-                        <td><?=$kirim['fio']?></td>
-                        <td><?=$kirim['kompaniya_nomi']?></td>
-                        <td><?= rtrim(rtrim(number_format($kirim['balans'], 2, '.', ' '), '0'), '.') ?></td>
-                        <td><?=$kirim['telefon']?></td>
-                        <td><?=$kirim['sana']?></td>                        
-                        <td><?= rtrim(rtrim(number_format($kirim['summa'], 2, '.', ' '), '0'), '.') ?></td>
-                        <td><?=$kirim['izoh']?></td> 
-                        <td>
-                            <button class="btn btn-sm btn-outline-warning" title="Ko'rish" onclick="viewDetailsKirim(<?= $kirim['id'] ?>)">
-                                👁️
-                            </button>
-                        </td>                       
-                    </tr>
-                <?php }; ?>
-            </tbody>
-        </table>
+        <div id="kirimqoshishcn">
+
+        </div>
     </div>
 </section>
 <div id="historyKirimModal" class="modal">
@@ -145,8 +100,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         </div>
     </div>
 </div>
-<script src="../js/jquery-3.6.0.min.js"></script>
-<script src="../js/sweetalert.min.js"></script>
+
 <script>
     function viewDetailsKirim(rowId) {
         const modal = document.getElementById('historyKirimModal');
@@ -249,53 +203,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         });
     }
 
-    $(document).ready(function() {
-        var table_kirimadd = $('#kirimTable').DataTable({
-            language: {
-                "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
-                "zeroRecords": "Hech qanday ma'lumot topilmadi",
-                "info": "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
-                "infoEmpty": "Ma'lumot yo‘q",
-                "infoFiltered": "(_MAX_ ta umumiy yozuvdan filtrlandi)",
-                "search": "Qidiruv:",
-                "paginate": {
-                    "first": "Birinchi",
-                    "last": "Oxirgi",
-                    "next": "Keyingi",
-                    "previous": "Oldingi"
-                }
-            }
-        });
-        function filterByDateRangeKirim(settings, data, dataIndex) {
-            var start = $('#startDate_kirimadd').val();
-            var end = $('#endDate_kirimadd').val();
-            var dateStr = data[4]; 
-
-            if (!start && !end) {
-                return true;
-            }
-            var parts = dateStr.split('.');
-            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
-            var rowDate = new Date(convertedDate);
-            if (start) start = new Date(start);
-            if (end) end = new Date(end);
-
-            return (!start || rowDate >= start) && (!end || rowDate <= end);
-        }
-
-        $('#filterByDate_kirimadd').on('click', function () {
-            $.fn.dataTable.ext.search = []; 
-            $.fn.dataTable.ext.search.push(filterByDateRangeKirim);
-            table_kirimadd.draw();
-        });
-
-        $('#clearFilter_kirimadd').on('click', function () {
-            $('#startDate_kirimadd').val('');
-            $('#endDate_kirimadd').val('');
-            $.fn.dataTable.ext.search = []; 
-            table_kirimadd.draw();
-        });      
-    });
+    
     const toggleKirimViewBtn = document.getElementById('toggleKirimViewBtn');
     const kirimForm = document.getElementById('kirimForm');
     const kirimTableSection = document.getElementById('kirimTableSection');
@@ -389,7 +297,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
             umumiy_summa: total_summa,
             mahsulotlar: mahsulotlar
         };
-        console.log(kirimData);
         $.ajax({
             url: '../form_insert_data/kirim_data_qoshish.php',
             type: 'POST',
@@ -398,12 +305,13 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
             dataType: 'json',
             success: function (response) {
                 if (response.success) {
-                    swal("✅ Muvaffaqiyatli!", response.message, "success");
+                    showAlert(response.message, "success");
                     $('#kirimForm')[0].reset();
                     $('#kirim-mahsulotlar-wrapper').html('');
                     addKirimProduct(); 
+                    loadKirimQoshish();
                 } else {
-                    swal("❌ Xatolik!", response.message, "error");
+                    showAlert(response.message, "error");
                 }
             },
             error: function (xhr, status, error) {

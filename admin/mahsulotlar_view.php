@@ -1,27 +1,12 @@
 <?php
     include_once '../config.php';
     $db = new Database();
-    $query = "SELECT
-        m.id,
-        m.nomi,
-        k.nomi AS categoriya_nomi,
-        b.nomi AS birlik_nomi,
-        m.narxi,
-        COALESCE(mz.soni, 0) AS soni,
-        m.tavsif,
-        m.created_at               
-    FROM mahsulotlar m
-    LEFT JOIN categoriya k ON m.categoriya_id = k.id
-    LEFT JOIN birliklar b ON m.birlik_id = b.id
-    LEFT JOIN mahsulot_zahirasi mz ON m.id = mz.mahsulot_id;";
-
-    $mahsulotlar = $db->query($query);
     $categoriyalar = $db->get_data_by_table_all('categoriya');
     $birliklar = $db->get_data_by_table_all('birliklar');
 ?>
 <style>
     .expense-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #14d63eff;
         color: white;
         border: none;
         padding: 12px 24px;
@@ -40,6 +25,7 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
     }
+    
 </style>
 <section id="mahsulotlar" class="content-section">
     <div class="section-header">
@@ -51,62 +37,10 @@
     <div style="margin-bottom: 1rem;">
         <button id="toggleViewBtn" class="expense-btn">📋 Jadval ko‘rinishini ko‘rsatish</button>
     </div>
-    <div id="gridView" class="kataklar-grid">
-        <?php foreach ($mahsulotlar as $mahsulot): ?>
-        <div class="katak-card">
-            <div class="katak-header">
-                <div class="katak-title"><?= $mahsulot['nomi'] ?></div>
-                <span class="katak-status status-active"><?= $mahsulot['categoriya_nomi'] ?></span>
-            </div>
-            <div class="katak-info">
-                <div class="info-item">
-                    <div class="info-value"><td><?= rtrim(rtrim(number_format($mahsulot['soni'], 2, '.', ' '), '0'), '.')?></td></div>
-                    <div class="info-label"><?= $mahsulot['birlik_nomi'] ?></div>
-                </div>
-                <div class="info-item">
-                    <div class="info-value"><td><?= rtrim(rtrim(number_format($mahsulot['narxi'], 2, '.', ' '), '0'), '.')?></td></div>
-                    <div class="info-label">so'm/<?= $mahsulot['birlik_nomi'] ?></div>
-                </div>
-            </div>
-            <p><?= $mahsulot['tavsif'] ?></p>
-            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                <button class="btn btn-primary" style="font-size: 0.8rem;" onclick="editMahsulot(1)">✏️ Tahrirlash</button>
-                <button class="btn btn-warning" style="font-size: 0.8rem;" onclick="updateStock(1)">📊 Qoldiq</button>
-            </div>
-        </div>
-        <?php endforeach; ?>
+    <div id="mahsulotlarcn">
+        
     </div>
-    <div id="tableView" style="display: none;">
-        <table id="mahsulotlarTable" class="display">
-            <thead>
-                <tr>
-                    <th>Nomi</th>
-                    <th>Categoriya</th>
-                    <th>Soni</th>
-                    <th>Birlik</th>
-                    <th>Narxi</th>
-                    <th>Tavsif</th>
-                    <th>Amallar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($mahsulotlar as $m): ?>
-                <tr>
-                    <td><?= $m['nomi'] ?></td>
-                    <td><?= $m['categoriya_nomi'] ?></td>
-                    <td><?= rtrim(rtrim(number_format($m['soni'], 2, '.', ' '), '0'), '.')?></td>
-                    <td><?= $m['birlik_nomi'] ?></td>
-                    <td><?= rtrim(rtrim(number_format($m['narxi'], 2, '.', ' '), '0'), '.')?></td>
-                    <td><?= $m['tavsif'] ?></td>
-                    <td>
-                        <button class="btn btn-primary" onclick="editMahsulot(1)">✏️</button>
-                        <button class="btn btn-warning" onclick="updateStock(1)">📊</button>
-                    </td>
-                </tr>
-                <?php endforeach ?>
-            </tbody>
-        </table>
-    </div>
+    
 </section>
 <!-- Mahsulot qo'shish modali -->
 <div id="mahsulotModal" class="modal">
@@ -158,26 +92,9 @@
         </form>
     </div>
 </div>
-<script src="../js/jquery-3.6.0.min.js"></script>
-<script src="../js/sweetalert.min.js"></script>
-<script>
-    document.getElementById('toggleViewBtn').addEventListener('click', function () {
-        const gridView = document.getElementById('gridView');
-        const tableView = document.getElementById('tableView');
 
-        if (gridView.style.display === 'none') {
-            gridView.style.display = 'grid';
-            tableView.style.display = 'none';
-            this.innerText = '📋 Jadval ko‘rinishini ko‘rsatish';
-        } else {
-            gridView.style.display = 'none';
-            tableView.style.display = 'block';
-            this.innerText = '📦 Katak ko‘rinishini ko‘rsatish';
-        }
-    });
-    $(document).ready(function() {
-        $('#mahsulotlarTable').DataTable();
-    });
+<script>
+    
     $('#mahsulotForm').on('submit', function (event) {
         event.preventDefault(); 
         const mahsulot_nomi = $('#mahsulot_nomi').val();
@@ -200,9 +117,13 @@
                 if (response.status === 'success') {
                     showAlert("✅ Mahsulot qo'shildi!", "success");
                     $('#mahsulotForm')[0].reset(); 
+
+                    closeModal('mahsulotModal');
+
+                    loadMahsulotlar();
                 } else {
                     showAlert("❗ Xatolik: " + (response.message || "Ma'lumotlar bazasiga qo'shilmadi!"), "error");
-                    closeModal('mahsulotModal');
+                    
                     $('#mahsulotForm')[0].reset();
                 }
             },
@@ -216,4 +137,5 @@
     function closeModal(modalId) {
         document.getElementById(modalId).style.display = 'none';
     }
+    
 </script>

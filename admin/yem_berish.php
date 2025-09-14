@@ -9,7 +9,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
     <div class="section-header">
         <h2 class="section-title">🌾 Yem berish</h2>
         <div style="margin-top: 1rem;">
-            <button id="toggleYemViewBtn" class="btn btn-outline-primary">📋 Jadval ko‘rinishini ko‘rsatish</button>
+            <button id="toggleYemViewBtn"  class="expense-btn">📋 Jadval ko‘rinishini ko‘rsatish</button>
         </div>
     </div>
 
@@ -81,37 +81,9 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
             </div>
         </div>
         <div class="table-responsive">
-            <table id="yemBerishTable" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th><i class="fas fa-home me-1"></i>Katak</th>
-                        <th><i class="fas fa-seedling me-1"></i>Yem turi</th>
-                        <th><i class="fas fa-weight-hanging me-1"></i>Miqdori</th>
-                        <th><i class="fas fa-calendar me-1"></i>Sana</th>
-                        <th><i class="fas fa-comment me-1"></i>Izoh</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $query_for_oj = "
-                        SELECT yb.id AS yem_id, yb.sana, yb.miqdori, yb.izoh, k.katak_nomi, m.nomi AS mahsulot_nomi 
-                        FROM yem_berish yb 
-                        INNER JOIN kataklar k ON yb.katak_id = k.id 
-                        INNER JOIN mahsulotlar m ON yb.mahsulot_id = m.id 
-                        ORDER BY yb.sana DESC;
-                    ";
-                    $fetch = $db->query($query_for_oj);
-                    while ($joja_row = mysqli_fetch_assoc($fetch)) { ?>
-                        <tr>
-                            <td><span class="badge-katak"><?= htmlspecialchars($joja_row['katak_nomi']) ?></span></td>
-                            <td><?= htmlspecialchars($joja_row['mahsulot_nomi']) ?></td>
-                            <td><span class="miqdor-badge"><?= htmlspecialchars($joja_row['miqdori']) ?> kg</span></td>
-                            <td data-order="<?= $joja_row['sana'] ?>"><?= date('d.m.Y', strtotime($joja_row['sana'])) ?></td>
-                            <td><?= htmlspecialchars($joja_row['izoh']) ?></td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+            <div id="yemberishcn">
+
+            </div>
         </div>
     </div>
 </section>
@@ -131,60 +103,10 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
             ? '➕ Forma ko‘rinishini ko‘rsatish' 
             : '📋 Jadval ko‘rinishini ko‘rsatish';
     });
-    $(document).ready(function() {
-        var table_yem = $('#yemBerishTable').DataTable({
-            language: {
-                "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
-                "zeroRecords": "Hech qanday ma'lumot topilmadi",
-                "info": "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
-                "infoEmpty": "Ma'lumot yo‘q",
-                "infoFiltered": "(_MAX_ ta umumiy yozuvdan filtrlandi)",
-                "search": "Qidiruv:",
-                "paginate": {
-                    "first": "Birinchi",
-                    "last": "Oxirgi",
-                    "next": "Keyingi",
-                    "previous": "Oldingi"
-                }
-            }
-        });
-        function filterByDateRangeYem(settings, data, dataIndex) {
-            var start = $('#startDate_yem').val();
-            var end = $('#endDate_yem').val();
-            var dateStr = data[3]; 
-
-            if (!start && !end) {
-                return true;
-            }
-            var parts = dateStr.split('.');
-            var convertedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
-            var rowDate = new Date(convertedDate);
-            if (start) start = new Date(start);
-            if (end) end = new Date(end);
-
-            return (!start || rowDate >= start) && (!end || rowDate <= end);
-        }
-
-        $('#filterByDate_yem').on('click', function () {
-            $.fn.dataTable.ext.search = []; 
-            $.fn.dataTable.ext.search.push(filterByDateRangeYem);
-            table_yem.draw();
-        });
-
-        $('#clearFilter_yem').on('click', function () {
-            $('#startDate_yem').val('');
-            $('#endDate_yem').val('');
-            $.fn.dataTable.ext.search = []; 
-            table_yem.draw();
-        });        
-    });
-
-    var jq = $.noConflict();
-    jq(document).ready(function($) {
-        $('#yemBerishTable').DataTable();
-    });
+    
     function addYem(event) {
         event.preventDefault();
+
         const katakId = $('#yem_katak_id').val();
         const sana = $('#yem_sana').val();
         const yemTuri = $('#yem_turi').val();
@@ -192,24 +114,13 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
         const izoh = $('#yem_izoh').val();
 
         if (!katakId || !sana || !yemTuri || !miqdori) {
-            swal({
-                title: "Xatolik!",
-                text: "Barcha majburiy maydonlarni to'ldiring!",
-                icon: "warning",
-                button: "OK"
-            });
+            showAlert("❗ Barcha majburiy maydonlarni to'ldiring!", "error");
             return;
         }
         if (miqdori <= 0) {
-            swal({
-                title: "Xatolik!",
-                text: "Yem miqdori 0 dan katta bo'lishi kerak!",
-                icon: "warning",
-                button: "OK"
-            });
+            showAlert("❗ Yem miqdori 0 dan katta bo'lishi kerak!", "error");
             return;
         }
-
         const data = {
             katak_id: katakId,
             sana: sana,
@@ -217,48 +128,27 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
             miqdori: miqdori,
             izoh: izoh
         };
-        swal({
-            title: "Yuklanmoqda...",
-            text: "Ma'lumotlar saqlanmoqda",
-            icon: "info",
-            buttons: false,
-            closeOnClickOutside: false,
-            closeOnEsc: false
-        });
+
         $.ajax({
             url: '../form_insert_data/yem_berish.php',
-            type: 'POST',
-            data: JSON.stringify(data),
+            method: 'POST',
             contentType: 'application/json',
+            data: JSON.stringify(data),
             dataType: 'json',
+
             success: function(result) {
                 if (result.success) {
-                    swal({
-                        title: "Muvaffaqiyat!",
-                        text: result.message || "Yem berish muvaffaqiyatli qo'shildi!",
-                        icon: "success",
-                        button: "OK"
-                    }).then(() => {
-                        $('#yemForm')[0].reset();
-                        document.getElementById('yem_sana').valueAsDate = new Date();
-                    });
+                    showAlert(result.message || "✅ Yem muvaffaqiyatli qo‘shildi!", 'success');
+                    $('#yemForm')[0].reset();
+                    document.getElementById('yem_sana').valueAsDate = new Date();
+                    loadYemBerish();
                 } else {
-                    swal({
-                        title: "Xatolik!",
-                        text: result.message || "Ma'lumot qo'shishda xatolik yuz berdi!",
-                        icon: "error",
-                        button: "OK"
-                    });
+                    showAlert(result.message || "❗ Ma'lumot qo‘shishda xatolik yuz berdi!", 'error');
+                    $('#yemForm')[0].reset();
                 }
             },
             error: function(xhr, status, error) {
-                let errorMessage = "Ma'lumotlar bazasiga qo'shishda xatolik yuz berdi!";
-                swal({
-                    title: "Xatolik!",
-                    text: errorMessage,
-                    icon: "error",
-                    button: "OK"
-                });
+                showAlert("❌ Server xatosi: Ma'lumotlar bazasiga qo'shishda muammo yuz berdi!", "error");
             }
         });
     }

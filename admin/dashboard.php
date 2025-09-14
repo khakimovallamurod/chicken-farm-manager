@@ -258,13 +258,103 @@ if (!isset($_SESSION['login'])) {
             
         </main>
     </div>
-
+        
     <div id="alertContainer" style="position: fixed; top: 100px; right: 20px; z-index: 3000;"></div>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="../assets/js/dashboard_script.js"></script>
-    
+    <script>
+        function loadKatakView() {
+        $.get("get/katak_view_data.php", function(data) {
+            $("#katakviewcn").html(data);
+        });
+    }
+    loadKatakView();
+    function loadMahsulotlar() {
+        $.get("get/mahsulot_data.php", function(data) {
+            $("#mahsulotlarcn").html(data);
+        });
+    }
+    loadMahsulotlar();
+
+    function loadJojaQoshish() {
+        $.get("get/jojaqoshish_data.php", function(data) {
+            $("#jojaqoshishcn").html(data);
+        });        
+    }
+    loadJojaQoshish();
+
+    function loadYemBerish() {
+        $.get("get/yemberish_data.php", function(data) {
+            $("#yemberishcn").html(data);
+        });        
+    }
+    loadYemBerish();
+
+    function loadOlganJoja() {
+        $.get("get/olganjoja_data.php", function(data) {
+            $("#olganjojacn").html(data);
+        });        
+    }
+    loadOlganJoja();
+
+    function loadGoshtSoyish() {
+        $.get("get/goshtsoyish_data.php", function(data) {
+            $("#goshtsoyishcn").html(data);
+        });        
+    }
+    loadGoshtSoyish();
+
+    function loadMijozQoshish() {
+        $.get("get/mijozqoshish_data.php", function(data) {
+            $("#mijozqoshishcn").html(data);
+        });        
+    }
+    loadMijozQoshish();
+
+    function loadTaminotchiQoshish() {
+        $.get("get/taminotchiqoshish_data.php", function(data) {
+            $("#taminotchiqoshishcn").html(data);
+        });
+    }
+    loadTaminotchiQoshish();
+
+    function loadKirimQoshish() {
+        $.get("get/kirimqoshish_data.php", function(data) {
+            $("#kirimqoshishcn").html(data);
+        });
+    }
+    loadKirimQoshish();
+
+    function loadXarajatQoshish() {
+        $.get("get/xarajatqoshish_data.php", function(data) {
+            $("#xarajatqoshishcn").html(data);
+        });
+    }
+    loadXarajatQoshish();
+
+    function loadSotuvQoshish() {
+        $.get("get/sotuvqoshish_data.php", function(data) {
+            $("#sotuvqoshishcn").html(data);
+        });
+    }
+    loadSotuvQoshish();
+
+    function loadPulOlish() {
+        $.get("get/pulolish_data.php", function(data) {
+            $("#pulolishcn").html(data);
+        });
+    }
+    loadPulOlish();
+
+    function loadPulBerish() {
+        $.get("get/pulberish_data.php", function(data) {
+            $("#pulberishcn").html(data);
+        });
+    }
+    loadPulBerish();
+    </script>
 </body>
 </html>
