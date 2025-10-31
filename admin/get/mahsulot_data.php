@@ -52,7 +52,7 @@
             <p><?= $mahsulot['tavsif'] ?></p>
             <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
                 <button class="btn btn-primary" style="font-size: 0.8rem;" onclick="editMahsulot(<?= $mahsulot['id'] ?>)">✏️ Tahrirlash</button>
-                <button class="btn btn-warning" style="font-size: 0.8rem;" onclick="updateStock(<?= $mahsulot['id'] ?>)">📊 Qoldiq</button>
+                <button class="btn btn-danger" style="font-size: 0.8rem;" onclick="updateStock(<?= $mahsulot['id'] ?>)">❌ O'chirish</button>
             </div>
         </div>
     <?php endforeach; ?>
@@ -80,8 +80,8 @@
                 <td><?= rtrim(rtrim(number_format($m['narxi'], 2, '.', ' '), '0'), '.')?></td>
                 <td><?= $m['tavsif'] ?></td>
                 <td>
-                    <button class="btn btn-primary" onclick="editMahsulot(<?= $m['id'] ?>)">✏️</button>
-                    <button class="btn btn-warning" onclick="updateStock(<?= $m['id'] ?>)">📊</button>
+                    <button class="btn btn-primary" onclick="editMahsulot(<?= $m['id'] ?>)">✏️ Tahrirlash</button>
+                    <button class="btn btn-danger" onclick="updateStock(<?= $m['id'] ?>)">❌ O'chirish</button>
                 </td>
             </tr>
             <?php endforeach ?>
@@ -118,5 +118,27 @@
                 $(this).text("📋 Jadval ko‘rinishini ko‘rsatish");
             }
         });
+        $('#mahsulotlarTable').DataTable({
+            "paging": true,        
+            "searching": true,     
+            "ordering": true,      
+            "order": [[0, "asc"]],
+            "info": true,      
+            "lengthMenu": [5, 10, 25, 50, 100], // ko'rsatish soni
+            "language": {
+                "search": "Qidirish:",
+                "lengthMenu": "Har bir sahifada _MENU_ ta",
+                "info": "Jami _TOTAL_ ta taminotchidan _START_ dan _END_ gacha",
+                "infoEmpty": "Ma’lumot yo‘q",
+                "infoFiltered": "(filtrlangan _MAX_ ta ma’lumotdan)",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
+                },
+            }
+        });
     });
+    
 </script>

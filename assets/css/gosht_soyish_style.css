@@ -1,0 +1,105 @@
+/* Modalning umumiy fonini qoraytirish */
+.modal {
+    display: none; /* Dastlab yashirin */
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* qoraytirilgan fon */
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Modal ichki konteyneri */
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    max-width: 1000px; /* Katta ekranda maksimal kenglik */
+    width: 95%; /* Mobil va kichik ekranlarda moslashuvchan */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Jadval uchun dizayn */
+#historyTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Jadval ustunlar dizayni */
+#historyTable thead th {
+    background: #3498db;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Jadval satrlar */
+#historyTable tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    background-color: #fafafa;
+}
+
+#historyTable tbody tr:hover {
+    background-color: #f1faff;
+    transition: 0.2s ease;
+}
+
+/* Jadvalning kichik ekranlarga moslashuvi */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 98%;
+        padding: 15px;
+    }
+
+    #historyTable thead {
+        display: none; /* mobil rejimda sarlavhalarni yashiramiz */
+    }
+
+    #historyTable, #historyTable tbody, #historyTable tr, #historyTable td {
+        display: block;
+        width: 100%;
+    }
+
+    #historyTable tr {
+        margin-bottom: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #fff;
+        padding: 10px;
+    }
+
+    #historyTable td {
+        text-align: left;
+        padding: 8px 10px;
+        position: relative;
+    }
+
+    #historyTable td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: #3498db;
+        margin-bottom: 4px;
+    }
+}
+
+/* Animatsiya effekti */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

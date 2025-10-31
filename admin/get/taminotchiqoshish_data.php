@@ -52,3 +52,28 @@ $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_a
         </tbody>
     </table>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#taminotchiTable').DataTable({
+            "paging": true,        
+            "searching": true,     
+            "ordering": true,      
+            "order": [[0, "asc"]],
+            "info": true,      
+            "lengthMenu": [5, 10, 25, 50, 100], // ko'rsatish soni
+            "language": {
+                "search": "Qidirish:",
+                "lengthMenu": "Har bir sahifada _MENU_ ta",
+                "info": "Jami _TOTAL_ ta taminotchidan _START_ dan _END_ gacha",
+                "infoEmpty": "Ma’lumot yo‘q",
+                "infoFiltered": "(filtrlangan _MAX_ ta ma’lumotdan)",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
+                },
+            }
+        });
+    });
+</script>

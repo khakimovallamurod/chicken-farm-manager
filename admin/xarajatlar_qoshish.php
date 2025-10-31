@@ -143,8 +143,9 @@
                 if (response.success) {
                     showAlert(response.message, 'success');
                     $('#harajatForm')[0].reset();
-                    closeModal('harajatModal'); 
                     loadXarajatQoshish();
+                    closeModal('harajatModal'); 
+                    
                 } else {
                     showAlert(response.message, 'error');
                 }

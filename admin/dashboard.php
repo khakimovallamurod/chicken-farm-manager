@@ -16,84 +16,7 @@ if (!isset($_SESSION['login'])) {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/yem_berish_style.css">
-    <style>        
-        .remove-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .remove-btn:hover {
-            background-color: #c0392b;
-        }
-
-        /* ➕ Qo'shish tugmasi uchun stil */
-        .add-product-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 12px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.3s;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .add-product-btn:hover {
-            background-color: #229954;
-        }
-
-        /* Asosiy tugma */
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            margin-top: 20px;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-
-
-        /* Mahsulot qatori uchun */
-        .product-row {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: #fafafa;
-        }
-
-        .product-row:hover {
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
+   
 </head>
 <body>
     <!-- Header -->
@@ -117,7 +40,11 @@ if (!isset($_SESSION['login'])) {
 
     <div class="main-container">
         <!-- Sidebar -->
-        <nav class="sidebar">
+        <button class="sidebar-toggle-inside" id="sidebarToggle">
+            ☰
+        </button>
+        <nav class="sidebar" id="sidebar">
+            <!-- Sidebar Toggle Button (sidebar ichida, o'ng tomonda) -->            
             <ul class="nav-menu">
                 <li class="nav-item">
                     <button class="nav-btn active" onclick="showSection('dashboard')">
@@ -211,7 +138,6 @@ if (!isset($_SESSION['login'])) {
                 </li>
             </ul>
         </nav>
-
         <!-- Content Area -->
         <main class="content-area">
             <!-- Dashboard -->
@@ -258,7 +184,6 @@ if (!isset($_SESSION['login'])) {
             
         </main>
     </div>
-        
     <div id="alertContainer" style="position: fixed; top: 100px; right: 20px; z-index: 3000;"></div>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
@@ -266,95 +191,154 @@ if (!isset($_SESSION['login'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="../assets/js/dashboard_script.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            
+            // Toggle button bosilganda
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                if (window.innerWidth <= 768) {
+                    // Mobilda
+                    sidebar.classList.toggle('open');
+                    // Icon o'zgartirish
+                    if (sidebar.classList.contains('open')) {
+                        toggleBtn.innerHTML = '☰';
+                    } else {
+                        toggleBtn.innerHTML = '☰';
+                    }
+                } else {
+                    // Desktopda
+                    sidebar.classList.toggle('collapsed');
+                    // Icon o'zgartirish
+                    if (sidebar.classList.contains('collapsed')) {
+                        toggleBtn.innerHTML = '☰';
+                    } else {
+                        toggleBtn.innerHTML = '☰';
+                    }
+                }
+            });
+            
+            // Tashqariga bosilganda yopish (faqat mobilda)
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.contains(event.target) && sidebar.classList.contains('open')) {
+                        sidebar.classList.remove('open');
+                        toggleBtn.innerHTML = '☰';
+                    }
+                }
+            });
+            
+            // Nav buttonlarga bosilganda mobilda yopish
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        toggleBtn.innerHTML = '☰';
+                    }
+                });
+            });
+            
+            // Ekran o'lchami o'zgarganda
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('open');
+                    sidebar.classList.remove('collapsed');
+                    toggleBtn.innerHTML = '☰';
+                }
+            });
+        });
         function loadKatakView() {
-        $.get("get/katak_view_data.php", function(data) {
-            $("#katakviewcn").html(data);
-        });
-    }
-    loadKatakView();
-    function loadMahsulotlar() {
-        $.get("get/mahsulot_data.php", function(data) {
-            $("#mahsulotlarcn").html(data);
-        });
-    }
-    loadMahsulotlar();
+            $.get("get/katak_view_data.php", function(data) {
+                $("#katakviewcn").html(data);
+            });
+        }
+        loadKatakView();
+        function loadMahsulotlar() {
+            $.get("get/mahsulot_data.php", function(data) {
+                $("#mahsulotlarcn").html(data);
+            });
+        }
+        loadMahsulotlar();
 
-    function loadJojaQoshish() {
-        $.get("get/jojaqoshish_data.php", function(data) {
-            $("#jojaqoshishcn").html(data);
-        });        
-    }
-    loadJojaQoshish();
+        function loadJojaQoshish() {
+            $.get("get/jojaqoshish_data.php", function(data) {
+                $("#jojaqoshishcn").html(data);
+            });        
+        }
+        loadJojaQoshish();
 
-    function loadYemBerish() {
-        $.get("get/yemberish_data.php", function(data) {
-            $("#yemberishcn").html(data);
-        });        
-    }
-    loadYemBerish();
+        function loadYemBerish() {
+            $.get("get/yemberish_data.php", function(data) {
+                $("#yemberishcn").html(data);
+            });        
+        }
+        loadYemBerish();
 
-    function loadOlganJoja() {
-        $.get("get/olganjoja_data.php", function(data) {
-            $("#olganjojacn").html(data);
-        });        
-    }
-    loadOlganJoja();
+        function loadOlganJoja() {
+            $.get("get/olganjoja_data.php", function(data) {
+                $("#olganjojacn").html(data);
+            });        
+        }
+        loadOlganJoja();
 
-    function loadGoshtSoyish() {
-        $.get("get/goshtsoyish_data.php", function(data) {
-            $("#goshtsoyishcn").html(data);
-        });        
-    }
-    loadGoshtSoyish();
+        function loadGoshtSoyish() {
+            $.get("get/goshtsoyish_data.php", function(data) {
+                $("#goshtsoyishcn").html(data);
+            });        
+        }
+        loadGoshtSoyish();
 
-    function loadMijozQoshish() {
-        $.get("get/mijozqoshish_data.php", function(data) {
-            $("#mijozqoshishcn").html(data);
-        });        
-    }
-    loadMijozQoshish();
+        function loadMijozQoshish() {
+            $.get("get/mijozqoshish_data.php", function(data) {
+                $("#mijozqoshishcn").html(data);
+            });        
+        }
+        loadMijozQoshish();
 
-    function loadTaminotchiQoshish() {
-        $.get("get/taminotchiqoshish_data.php", function(data) {
-            $("#taminotchiqoshishcn").html(data);
-        });
-    }
-    loadTaminotchiQoshish();
+        function loadTaminotchiQoshish() {
+            $.get("get/taminotchiqoshish_data.php", function(data) {
+                $("#taminotchiqoshishcn").html(data);
+            });
+        }
+        loadTaminotchiQoshish();
 
-    function loadKirimQoshish() {
-        $.get("get/kirimqoshish_data.php", function(data) {
-            $("#kirimqoshishcn").html(data);
-        });
-    }
-    loadKirimQoshish();
+        function loadKirimQoshish() {
+            $.get("get/kirimqoshish_data.php", function(data) {
+                $("#kirimqoshishcn").html(data);
+            });
+        }
+        loadKirimQoshish();
 
-    function loadXarajatQoshish() {
-        $.get("get/xarajatqoshish_data.php", function(data) {
-            $("#xarajatqoshishcn").html(data);
-        });
-    }
-    loadXarajatQoshish();
+        function loadXarajatQoshish() {
+            $.get("get/xarajatqoshish_data.php", function(data) {
+                $("#xarajatqoshishcn").html(data);
+            });
+        }
+        loadXarajatQoshish();
 
-    function loadSotuvQoshish() {
-        $.get("get/sotuvqoshish_data.php", function(data) {
-            $("#sotuvqoshishcn").html(data);
-        });
-    }
-    loadSotuvQoshish();
+        function loadSotuvQoshish() {
+            $.get("get/sotuvqoshish_data.php", function(data) {
+                $("#sotuvqoshishcn").html(data);
+            });
+        }
+        loadSotuvQoshish();
 
-    function loadPulOlish() {
-        $.get("get/pulolish_data.php", function(data) {
-            $("#pulolishcn").html(data);
-        });
-    }
-    loadPulOlish();
+        function loadPulOlish() {
+            $.get("get/pulolish_data.php", function(data) {
+                $("#pulolishcn").html(data);
+            });
+        }
+        loadPulOlish();
 
-    function loadPulBerish() {
-        $.get("get/pulberish_data.php", function(data) {
-            $("#pulberishcn").html(data);
-        });
-    }
-    loadPulBerish();
+        function loadPulBerish() {
+            $.get("get/pulberish_data.php", function(data) {
+                $("#pulberishcn").html(data);
+            });
+        }
+        loadPulBerish();
     </script>
 </body>
 </html>

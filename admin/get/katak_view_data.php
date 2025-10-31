@@ -49,8 +49,8 @@
         ORDER BY 
             CASE WHEN k.status = 'active' THEN 0 ELSE 1 END,
             k.created_at DESC;";
-        $query_last_price = "SELECT narxi FROM joja ORDER BY sana DESC LIMIT 1;";
-        $price = floatval(mysqli_fetch_assoc($db->query($query_last_price))['narxi']);   
+        // $query_last_price = "SELECT narxi FROM joja ORDER BY sana DESC LIMIT 1;";
+        // $price = floatval(mysqli_fetch_assoc($db->query($query_last_price))['narxi']);   
         $kataklar = $db->query($query);
         function money($value) {
             return number_format($value, 0, ',', ' ') . " so'm";
@@ -60,6 +60,10 @@
         }
         while ($katak = mysqli_fetch_assoc($kataklar)) {
             $today = new DateTime();
+            $katak_id = $katak['id'];
+            $query_last_price = "SELECT narxi FROM joja WHERE katak_id=$katak_id;";
+            $row = mysqli_fetch_assoc($db->query($query_last_price));
+            $price = floatval($row['narxi'] ?? 0);
             $old_date = new DateTime($katak['created_at']);
             $interval = $today->diff($old_date);
             $days = $interval->days;

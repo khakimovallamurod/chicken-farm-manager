@@ -203,7 +203,6 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         });
     }
 
-    
     const toggleKirimViewBtn = document.getElementById('toggleKirimViewBtn');
     const kirimForm = document.getElementById('kirimForm');
     const kirimTableSection = document.getElementById('kirimTableSection');
@@ -245,7 +244,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
                 </div>
                 <div class="form-group">
                     <label>&nbsp;</label>
-                    <button type="button" class="remove-btn" onclick="removeMahsulot(this)" title="Mahsulotni olib tashlash">
+                    <button type="button" class="remove-btn" onclick="removeMahsulotKirim(this)" title="Mahsulotni olib tashlash">
                         ❌
                     </button>
                 </div>
@@ -253,7 +252,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar');
         `;
         wrapper.appendChild(newRow);
     }
-    function removeMahsulot(button) {            
+    function removeMahsulotKirim(button) {            
         const productRow = button.closest('.product-row');
         const wrapper = document.getElementById('kirim-mahsulotlar-wrapper');
         

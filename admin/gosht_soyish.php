@@ -95,16 +95,14 @@
                     <thead>
                         <tr>
                             <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
-                            <th><i class="fas fa-home me-1"></i>Katak</th>
                             <th><i class="fas fa-dove me-1"></i>Jo'jalar soni</th>
-                            <th><i class="fas fa-user me-1"></i>Mijoz</th>
                             <th><i class="fas fa-balance-scale me-1"></i>Kg narxi</th>
                             <th><i class="fas fa-coins me-1"></i>Jami summa</th>
-                            <th><i class="fas fa-check-circle me-1"></i>Holati</th>
                         </tr>
                     </thead>
                     <tbody id="historyTableBody">
                     </tbody>
+                    <h3 id="totalSum" style="text-align:right; margin-top:15px; color:#333;"></h3>
                 </table>
             </div>
         </div>
@@ -151,7 +149,12 @@
             </form>
         </div>
     </div>
-   
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- 2. DataTables JS va CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
     <script>
         const toggleGoshtBtn = document.getElementById('toggleGoshtViewBtn');
         const goshtFormSection = document.getElementById('goshtFormSection');
@@ -168,29 +171,6 @@
                 : '📋 Jadval ko‘rinishini ko‘rsatish';
         });
         
-        
-        $('#historyTable').DataTable({
-            responsive: true,
-            order: [[2, 'desc']], 
-            language: {
-                search: "Qidiruv:",
-                lengthMenu: "Har sahifada _MENU_ ta yozuv",
-                info: "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
-                paginate: {
-                    first: "Birinchi",
-                    last: "Oxirgi",
-                    next: "Keyingi",
-                    previous: "Oldingi"
-                },
-                zeroRecords: "Hech narsa topilmadi",
-                infoEmpty: "Ma’lumot yo‘q",
-                infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
-            }
-        });
-        var jq = $.noConflict();
-        jq(document).ready(function($) {
-            $('#historyTable').DataTable();
-        });
         let addedProducts = [];
         let rowProducts = {};
         $('#goshtTopshirishForm').on('submit', function (event) {
@@ -217,6 +197,7 @@
                     if (response.status === 'success') {
                         showAlert(response.message, "success");
                         $('#goshtTopshirishForm')[0].reset();
+                        loadGoshtSoyish();
                     } else {
                         showAlert(response.message, "error");
                         $('#goshtTopshirishForm')[0].reset();
@@ -392,102 +373,105 @@
 
         function viewDetails(rowId) {
             const modal = document.getElementById('historyModal');
-            const historyContent = document.getElementById('historyContent');
-            historyContent.innerHTML = '<div style="text-align: center; padding: 40px;">Yuklanmoqda...</div>';
+            const tbody = document.getElementById('historyTableBody');
+            const totalSumElement = document.getElementById('totalSum'); 
+            const historyTable = $('#historyTable');
+
+            if ($.fn.DataTable.isDataTable('#historyTable')) {
+                historyTable.DataTable().destroy();
+            }
+            
             modal.style.display = 'flex';
+
+            tbody.innerHTML = `
+                <tr><td colspan="4" style="text-align:center; padding:15px;">
+                    ⏳ Ma'lumotlar yuklanmoqda...
+                </td></tr>
+            `;
+            totalSumElement.textContent = ''; 
             fetch('../api/get_gosht_mahsulotlar.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'id=' + rowId
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Tarmoq xatosi: ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(products => {
-                historyContent.innerHTML = `
-                    <div class="modal-header">
-                        <h3>📊 Go'sht so'yish mahsulotlari</h3>
-                        <button class="close" onclick="closeModal('historyModal')">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <table id="productsTable" class="table table-hover align-middle text-center">
-                            <thead>
-                                <tr>
-                                    <th>№</th>
-                                    <th>Mahsulot nomi</th>
-                                    <th>Miqdori</th>
-                                    <th>Narxi</th>
-                                    <th>Tavsif</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4" id="jamiRow" class="text-end"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                `;
-                const tbody = document.querySelector('#productsTable tbody');
+                if (!Array.isArray(products)) {
+                    products = products && typeof products === 'object' ? [products] : [];
+                }
+
+                tbody.innerHTML = '';
                 let totalSum = 0;
 
-                if (products.length > 0) {
-                    products.forEach((product, index) => {
-                        const rowSum = product.soni * product.narxi;
-                        totalSum += rowSum;
-
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${product.mahsulot_nomi}</td>
-                            <td>${product.soni}</td>
-                            <td>${product.narxi}</td>
-                            <td>${product.tavsif || '-'}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                    document.getElementById('jamiRow').innerHTML = `
-                        <strong>Jami summa: ${totalSum.toLocaleString()} so'm</strong>
+                if (products.length === 0) {
+                    tbody.innerHTML = `
+                        <tr><td colspan="4" style="text-align:center; color:gray;">
+                            ❗ Ushbu topshirikka mahsulotlar qo‘shilmagan.
+                        </td></tr>
                     `;
-
-                    setTimeout(() => {
-                        $('#productsTable').DataTable({
-                            responsive: true,
-                            language: {
-                                search: "Qidiruv:",
-                                lengthMenu: "Har sahifada _MENU_ ta yozuv",
-                                info: "Jami _TOTAL_ ta yozuvdan _START_–_END_ ko‘rsatilmoqda",
-                                paginate: {
-                                    first: "Birinchi",
-                                    last: "Oxirgi",
-                                    next: "Keyingi",
-                                    previous: "Oldingi"
-                                },
-                                zeroRecords: "Hech narsa topilmadi",
-                                infoEmpty: "Ma’lumot yo‘q",
-                                infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
-                            }
-                        });
-                    }, 100);
-
-                } else {
-                    document.querySelector('.modal-body').innerHTML = `
-                        <div class="no-products">
-                            <p>Ushbu topshirishga mahsulotlar qo'shilmagan</p>
-                        </div>
-                    `;
+                    totalSumElement.innerHTML = `<strong>Jami:</strong> 0 so‘m`;
+                    return;
                 }
+
+                // 4. Har bir qatorni yaratish va jami summani hisoblash
+                products.forEach(item => {
+                    const sana = item.created_at ? item.created_at.split(' ')[0] : '-';
+                    const soni = parseFloat(item.soni) || 0;
+                    const narx = parseFloat(item.narxi) || 0;
+                    const jami = narx * soni;
+
+                    totalSum += jami;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${sana}</td>
+                        <td>${soni}</td>
+                        <td>${narx.toLocaleString('uz-UZ')} so‘m</td>
+                        <td>${jami.toLocaleString('uz-UZ')} so‘m</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // 5. Jami summani chiqarish
+                totalSumElement.innerHTML = `<strong>Jami summa:</strong> ${totalSum.toLocaleString('uz-UZ')} so‘m`;
+
+                historyTable.DataTable({
+                    responsive: true,
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    language: {
+                        search: "Qidiruv:",
+                        lengthMenu: "Har sahifada _MENU_ ta yozuv",
+                        info: "Jami _TOTAL_ yozuvdan _START_–_END_ ko‘rsatilmoqda",
+                        paginate: {
+                            first: "Birinchi",
+                            last: "Oxirgi",
+                            next: "Keyingi",
+                            previous: "Oldingi"
+                        },
+                        zeroRecords: "Hech narsa topilmadi",
+                        infoEmpty: "Ma’lumot yo‘q",
+                        infoFiltered: "(umumiy _MAX_ yozuvdan filtrlandi)"
+                    }
+                });
             })
             .catch(error => {
                 console.error('Xatolik:', error);
-                historyContent.innerHTML = `
-                    <div class="error-message">
-                        <p>Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, qayta urunib ko'ring.</p>
-                    </div>
+                tbody.innerHTML = `
+                    <tr><td colspan="4" style="text-align:center; color:red;">
+                        ❌ Ma'lumotlarni yuklashda xatolik yuz berdi. (${error.message})
+                    </td></tr>
                 `;
+                totalSumElement.textContent = '';
             });
         }
+
 
         function editRecord(id) {
             alert(`Tahrirlash funksiyasi ID: ${id} uchun ishlab chiqilmoqda...`);

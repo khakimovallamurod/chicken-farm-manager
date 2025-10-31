@@ -30,7 +30,7 @@
     </div>
     
     <div id="katakviewcn">
-        ss
+        
     </div>
 </section>
 

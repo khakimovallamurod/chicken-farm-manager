@@ -167,7 +167,9 @@
 </head>
 <body>
     <section id="dashboard" class="content-section active">
+        
         <div class="section-header">
+            
             <h2 class="section-title">📊 Dashboard</h2>
         </div>
         
