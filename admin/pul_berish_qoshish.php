@@ -27,7 +27,7 @@
             </div>
             <div class="form-group">
                 <label>Berilgan miqdor (so'm):</label>
-                <input type="number" id="ber_summasi" required min="0" step="0.01" placeholder="Masalan: 3000000">
+                <input type="text" id="ber_summasi" required min="0" step="0.01" placeholder="Masalan: 3000000">
             </div>
             <div class="form-group">
                 <label>Berilgan sana:</label>
@@ -65,6 +65,13 @@
     </div>
 </div>
 <script>
+    const capacityInput_ber_summasi = document.getElementById('ber_summasi');
+    IMask(capacityInput_ber_summasi, {
+        mask: Number,
+        min: 0,
+        max: 1000000000000,
+        thousandsSeparator: ' '
+    });
     function viewDetailsPulBerish(id) {
         const modal = document.getElementById('historyPulBerishModal');
         const content = document.getElementById('PulBerishContent');

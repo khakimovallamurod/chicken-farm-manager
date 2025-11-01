@@ -6,7 +6,7 @@
 
     $turi = $input['turi'];
     $tolov = $input['tolov'];
-    $miqdor = $input['miqdor'];
+    $miqdor = intval(str_replace(' ', '', $input['miqdor']));
     $sana = $input['sana'];
     $izoh = $input['izoh'];
     $data = [

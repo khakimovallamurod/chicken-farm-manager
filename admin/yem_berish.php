@@ -44,7 +44,7 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
                 </div>
                 <div class="form-group">
                     <label>Yem miqdori (kg):</label>
-                    <input type="number" id="yem_miqdori" required min="1" placeholder="Masalan: 50">
+                    <input type="text" id="yem_miqdori" required min="0" placeholder="Masalan: 50">
                 </div>
             </div>
             <div class="form-group">
@@ -89,6 +89,13 @@ $mahsulotlar = $db->get_data_by_table_all('mahsulotlar', "WHERE categoriya_id = 
 </section>
 
 <script>
+    const capacityInput_yem_miqdori = document.getElementById('yem_miqdori');
+    IMask(capacityInput_yem_miqdori, {
+        mask: Number,
+        min: 0,
+        max: 10000000,
+        thousandsSeparator: ' '
+    });
     const toggleYemBtn = document.getElementById('toggleYemViewBtn');
     const yemFormSection = document.getElementById('yemFormSection');
     const yemTableSection = document.getElementById('yemTableSection');

@@ -4,7 +4,7 @@
     header('Content-Type: application/json'); 
     $mahsulot_nomi = $_POST['nomi'] ?? '';
     $mahsulot_kategoriya = $_POST['kategoriya'] ?? '';
-    $mahsulot_narxi = $_POST['narxi'] ?? 0;
+    $mahsulot_narxi = floatval(str_replace(' ', '', $_POST['narxi'])) ?? 0;
     $mahsulot_tavsif = $_POST['tavsif'] ?? '';
     $mahsulot_birlik = $_POST['birlik'] ?? '';
     

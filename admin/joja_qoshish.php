@@ -107,7 +107,7 @@
         </div>
         <div class="form-group">
           <label>Jo'jalar soni:</label>
-          <input type="number" id="joja_soni" required min="1" placeholder="Masalan: 100">
+          <input type="text" id="joja_soni" required min="0" placeholder="Masalan: 100">
         </div>
         <div class="form-group">
           <label>Sana:</label>
@@ -154,10 +154,17 @@
   </div>
   
 </section>
-
+<script src="https://unpkg.com/imask"></script>
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
 <script>
+  const capacityInput_joja_soni = document.getElementById('joja_soni');
+    IMask(capacityInput_joja_soni, {
+        mask: Number,
+        min: 0,
+        max: 1000000,
+        thousandsSeparator: ' '
+    });
     const toggleBtn = document.getElementById('toggleJojaViewBtn');
     const formSection = document.getElementById('jojaFormSection');
     const tableSection = document.getElementById('jojaTableSection');

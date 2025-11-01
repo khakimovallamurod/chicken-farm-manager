@@ -5,7 +5,7 @@ include_once '../config.php';
     $db = new Database();
 
     $mijoz_id = $_POST['taminotchi_id'];
-    $summa = $_POST['summa'];
+    $summa = intval(str_replace(' ', '', $_POST['summa']));
     $sana = $_POST['sana'];
     $tolov_usuli = $_POST['tolov_usuli'];
     $izoh = $_POST['izoh'] ?? '';

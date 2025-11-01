@@ -7,7 +7,7 @@
         'nomi' => $_POST['nomi'] ?? '',
         'categoriya_id' => $_POST['kategoriya_id'] ?? 0,
         'birlik_id' => $_POST['birlik_id'] ?? 0,
-        'narxi' => $_POST['narxi'] ?? 0,
+        'narxi' => floatval(str_replace(' ', '', $_POST['narxi'])) ?? 0,
         'tavsif' => $_POST['tavsif'] ?? '',
         'update_at' => date('Y-m-d H:i:s')
     ];

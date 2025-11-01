@@ -4,7 +4,7 @@
 
     $db = new Database();
     $mijoz_id = $_POST['mijoz_id'] ?? null;
-    $summa = $_POST['summa'] ?? null;
+    $summa = intval(str_replace(' ', '', $_POST['summa'])) ?? 0;
     $sana = $_POST['sana'] ?? null;
     $tolov_usuli = $_POST['tolov_usuli'] ?? null;
     $izoh = $_POST['izoh'] ?? '';

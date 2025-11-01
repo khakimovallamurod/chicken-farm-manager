@@ -59,7 +59,7 @@
             </div>
             <div class="form-group">
                 <label>Miqdor (so'm):</label>
-                <input type="number" id="harajat_miqdor" required min="0" step="0.01" placeholder="Masalan: 500000">
+                <input type="text" id="harajat_miqdor" required min="0" step="0.01" placeholder="Masalan: 500000">
             </div>
             <div class="form-group">
                 <label>Sana:</label>
@@ -101,6 +101,13 @@
 </section>
 
 <script>
+    const capacityInput_harajat_miqdor = document.getElementById('harajat_miqdor');
+    IMask(capacityInput_harajat_miqdor, {
+        mask: Number,
+        min: 0,
+        max: 1000000000000,
+        thousandsSeparator: ' '
+    });
     document.getElementById('toggleHarajatViewBtn').addEventListener('click', function() {
         const form = document.getElementById('harajatForm');
         const tableContainer = document.getElementById('harajatTableContainer');

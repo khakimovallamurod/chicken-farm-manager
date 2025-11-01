@@ -81,7 +81,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Narxi (so'm):</label>
-                    <input type="number" id="mahsulot_narxi" required min="0" placeholder="Masalan: 28000">
+                    <input type="text" id="mahsulot_narxi" required min="0" placeholder="Masalan: 28000">
                 </div>
             </div>
             <div class="form-group">
@@ -132,7 +132,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Narxi (so‘m):</label>
-                    <input type="number" id="edit_mahsulot_narxi" min="0" required>
+                    <input type="text" id="edit_mahsulot_narxi" min="0" required>
                 </div>
             </div>
 
@@ -159,6 +159,24 @@
 </div>
 
 <script>
+    const capacityInput_mahsulot_narxi = document.getElementById('mahsulot_narxi');
+    IMask(capacityInput_mahsulot_narxi, {
+        mask: Number,
+        min: 0,
+        max: 10000000000,
+        thousandsSeparator: ' '
+    });
+    const capacityInput_edit_mahsulot_narxi = document.getElementById('edit_mahsulot_narxi');
+    IMask(capacityInput_edit_mahsulot_narxi, {
+        mask: Number,
+        min: 0,
+        max: 10000000000,
+        thousandsSeparator: ' ',
+        radix: '.',          
+        mapToRadix: ['.'],   
+        normalizeZeros: true,
+        padFractionalZeros: true
+    });
     document.getElementById('toggleMahsulotViewBtn').addEventListener('click', function() {
         const grid = document.getElementById('gridView');
         const table = document.getElementById('tableView');

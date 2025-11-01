@@ -4,8 +4,8 @@
     header('Content-Type: application/json'); 
 
     $katak_id = $_POST['katak_id'] ?? '';
-    $soni = $_POST['soni'] ?? 0;
-    $massasi = $_POST['massasi'] ?? 0;
+    $soni = intval(str_replace(' ', '', $_POST['soni'])) ?? 0;
+    $massasi = intval(str_replace($_POST['massasi'])) ?? 0;
     $sana = $_POST['sana'] ?? '';
     $izoh = $_POST['izoh'] ?? '';
 

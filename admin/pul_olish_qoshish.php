@@ -46,7 +46,7 @@
             </div>
             <div class="form-group">
                 <label>Olingan miqdor (so'm):</label>
-                <input type="number" id="pul_olingan" required min="0" step="0.01" placeholder="Masalan: 3000000">
+                <input type="text" id="pul_olingan" required min="0" step="0.01" placeholder="Masalan: 3000000">
             </div>
             <div class="form-group">
                 <label>Olish sanasi:</label>
@@ -85,6 +85,13 @@
 </div>
 
 <script>
+    const capacityInput_pul_olingan = document.getElementById('pul_olingan');
+    IMask(capacityInput_pul_olingan, {
+        mask: Number,
+        min: 0,
+        max: 1000000000000,
+        thousandsSeparator: ' '
+    });
     function viewDetailsPulOlish(mijozId) {
         const modal = document.getElementById('historyPulOlishModal');
         const content = document.getElementById('pulOlishContent');

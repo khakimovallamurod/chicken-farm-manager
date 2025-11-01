@@ -38,11 +38,11 @@
                     </div>
                     <div class="form-group">
                         <label>Topshiriladigan jo'jalar massasi:</label>
-                        <input type="number" id="gosht_massasi" required min="1" placeholder="Masalan: 500kg">
+                        <input type="text" id="gosht_massasi" required min="1" placeholder="Masalan: 500kg">
                     </div>
                     <div class="form-group">
                         <label>Topshiriladigan jo'jalar soni:</label>
-                        <input type="number" id="gosht_soni" required min="1" placeholder="Masalan: 50">
+                        <input type="text" id="gosht_soni" required min="1" placeholder="Masalan: 50">
                     </div>
                     <div class="form-group">
                         <label>Topshirish sanasi:</label>
@@ -90,23 +90,21 @@
 
     <div id="historyModal" class="modal">
         <div class="modal-content">
+            <h3 style="text-align:center; margin-bottom:10px;">Gosht soyish mahsulotlari</h3>
             <div id="historyContent">
                 <table id="historyTable" class="table table-hover align-middle text-center">
                     <thead>
                         <tr>
-                            <th><i class="fas fa-calendar-alt me-1"></i>Sana</th>
-                            <th><i class="fas fa-dove me-1"></i>Jo'jalar soni</th>
-                            <th><i class="fas fa-balance-scale me-1"></i>Kg narxi</th>
-                            <th><i class="fas fa-coins me-1"></i>Jami summa</th>
+                            <th>Mahsulot nomi</th>
+                            <th>Umumiy miqdori</th>
                         </tr>
                     </thead>
-                    <tbody id="historyTableBody">
-                    </tbody>
-                    <h3 id="totalSum" style="text-align:right; margin-top:15px; color:#333;"></h3>
+                    <tbody id="historyTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
+
     <div id="addProductForRowModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -142,7 +140,7 @@
                     </div>
                     <div class="form-group">
                         <label>Miqdori:</label>
-                        <input type="number" id="product_quantity_row" required min="1" placeholder="Miqdorni kiriting">
+                        <input type="text" id="product_quantity_row" required min="1" placeholder="Miqdorni kiriting">
                     </div>
                 </div>                
                 <button type="submit" class="btn btn-success">➕ Mahsulot qo'shish</button>
@@ -156,6 +154,27 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
     <script>
+        const capacityInput_gosht_soni = document.getElementById('gosht_soni');
+        IMask(capacityInput_gosht_soni, {
+            mask: Number,
+            min: 0,
+            max: 100000000,
+            thousandsSeparator: ' '
+        });
+        const capacityInput_gosht_massasi = document.getElementById('gosht_massasi');
+        IMask(capacityInput_gosht_massasi, {
+            mask: Number,
+            min: 0,
+            max: 100000000,
+            thousandsSeparator: ' '
+        });
+        const capacityInput_product_quantity_row = document.getElementById('product_quantity_row');
+        IMask(capacityInput_product_quantity_row, {
+            mask: Number,
+            min: 0,
+            max: 100000000,
+            thousandsSeparator: ' '
+        });
         const toggleGoshtBtn = document.getElementById('toggleGoshtViewBtn');
         const goshtFormSection = document.getElementById('goshtFormSection');
         const goshtTableSection = document.getElementById('goshtTableSection');
@@ -256,7 +275,8 @@
             const rowId = document.getElementById('addProductForRowModal').dataset.rowId;
             const mahsulotId = document.getElementById('product_name_row').value;
             const miqdor = document.getElementById('product_quantity_row').value;
-
+            console.log(miqdor, mahsulotId);
+            
             $.ajax({
                 url: '../form_insert_data/get_gosht_soyish.php',
                 type: 'POST',
@@ -268,9 +288,12 @@
                 },
                 success: function(response) {
                     if (response.status === 'success') {
+                        console.log(response);
+                        
                         showAlert("✅ Mahsulot muvaffaqiyatli qo'shildi!", "success");
                         document.getElementById('addProductForRowForm').reset();
                         updateAddedProductsListForRow(rowId); 
+                        loadGoshtSoyish();
                     } else {
                         showAlert("❗ Xatolik: " + (response.message || "Ma'lumotlar qo'shilmadi"), "error");
                     }
@@ -374,74 +397,95 @@
         function viewDetails(rowId) {
             const modal = document.getElementById('historyModal');
             const tbody = document.getElementById('historyTableBody');
-            const totalSumElement = document.getElementById('totalSum'); 
             const historyTable = $('#historyTable');
 
             if ($.fn.DataTable.isDataTable('#historyTable')) {
                 historyTable.DataTable().destroy();
             }
-            
-            modal.style.display = 'flex';
 
+            modal.style.display = 'flex';
             tbody.innerHTML = `
-                <tr><td colspan="4" style="text-align:center; padding:15px;">
+                <tr><td colspan="2" style="text-align:center; padding:15px;">
                     ⏳ Ma'lumotlar yuklanmoqda...
                 </td></tr>
             `;
-            totalSumElement.textContent = ''; 
+
             fetch('../api/get_gosht_mahsulotlar.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'id=' + rowId
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Tarmoq xatosi: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(products => {
-                if (!Array.isArray(products)) {
-                    products = products && typeof products === 'object' ? [products] : [];
-                }
-
-                tbody.innerHTML = '';
-                let totalSum = 0;
-
-                if (products.length === 0) {
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                
+                if (!Array.isArray(data) || data.length === 0) {
                     tbody.innerHTML = `
-                        <tr><td colspan="4" style="text-align:center; color:gray;">
-                            ❗ Ushbu topshirikka mahsulotlar qo‘shilmagan.
-                        </td></tr>
-                    `;
-                    totalSumElement.innerHTML = `<strong>Jami:</strong> 0 so‘m`;
+                        <tr><td colspan="2" style="text-align:center; color:gray;">
+                            ❗ Ma'lumot topilmadi
+                        </td></tr>`;
                     return;
                 }
-
-                // 4. Har bir qatorni yaratish va jami summani hisoblash
-                products.forEach(item => {
-                    const sana = item.created_at ? item.created_at.split(' ')[0] : '-';
-                    const soni = parseFloat(item.soni) || 0;
-                    const narx = parseFloat(item.narxi) || 0;
-                    const jami = narx * soni;
-
-                    totalSum += jami;
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${sana}</td>
-                        <td>${soni}</td>
-                        <td>${narx.toLocaleString('uz-UZ')} so‘m</td>
-                        <td>${jami.toLocaleString('uz-UZ')} so‘m</td>
-                    `;
-                    tbody.appendChild(row);
+                const grouped = {};
+                data.forEach(item => {
+                    const id = item.mahsulot_id;
+                    if (!grouped[id]) {
+                        grouped[id] = {
+                            mahsulot_nomi: item.mahsulot_nomi,
+                            jami_soni: 0,
+                            details: []
+                        };
+                    }
+                    grouped[id].jami_soni += parseFloat(item.soni);
+                    grouped[id].details.push({
+                        sana: item.created_at ? item.created_at.split(' ')[0] : '-',
+                        soni: item.soni
+                    });
                 });
 
-                // 5. Jami summani chiqarish
-                totalSumElement.innerHTML = `<strong>Jami summa:</strong> ${totalSum.toLocaleString('uz-UZ')} so‘m`;
+                tbody.innerHTML = '';
+                let totalAll = 0;
+
+                // Har bir mahsulot uchun asosiy qator
+                Object.keys(grouped).forEach(mahsulot_id => {
+                    const g = grouped[mahsulot_id];
+                    totalAll += g.jami_soni;
+
+                    const mainRow = document.createElement('tr');
+                    mainRow.innerHTML = `
+                        <td style="cursor:pointer;" class="expandable" data-id="${mahsulot_id}">
+                            ▶️ ${g.mahsulot_nomi}
+                        </td>
+                        <td>${g.jami_soni}</td>
+                    `;
+                    tbody.appendChild(mainRow);
+                });
+
+                // Qatorni bosganda detallarni ochish
+                tbody.querySelectorAll('.expandable').forEach(cell => {
+                    cell.addEventListener('click', function() {
+                        const mahsulot_id = this.dataset.id;
+                        const existing = this.parentElement.nextElementSibling;
+                        if (existing && existing.classList.contains('details-row')) {
+                            existing.remove(); // agar ochilgan bo‘lsa yopamiz
+                            return;
+                        }
+
+                        const details = grouped[mahsulot_id].details;
+                        let rows = `<tr class="details-row"><td colspan="2">
+                            <table class="table table-sm table-bordered">
+                                <thead><tr><th>Sana</th><th>Miqdori</th></tr></thead><tbody>`;
+
+                        details.forEach(d => {
+                            rows += `<tr><td>${d.sana}</td><td>${d.soni}</td></tr>`;
+                        });
+
+                        rows += `</tbody></table></td></tr>`;
+                        this.parentElement.insertAdjacentHTML('afterend', rows);
+                    });
+                });
 
                 historyTable.DataTable({
-                    responsive: true,
                     paging: true,
                     searching: true,
                     ordering: true,
@@ -461,16 +505,12 @@
                     }
                 });
             })
-            .catch(error => {
-                console.error('Xatolik:', error);
-                tbody.innerHTML = `
-                    <tr><td colspan="4" style="text-align:center; color:red;">
-                        ❌ Ma'lumotlarni yuklashda xatolik yuz berdi. (${error.message})
-                    </td></tr>
-                `;
-                totalSumElement.textContent = '';
+            .catch(err => {
+                console.error('Xatolik:', err);
+                tbody.innerHTML = `<tr><td colspan="2" style="color:red;">❌ Ma'lumot yuklashda xatolik</td></tr>`;
             });
         }
+
 
 
         function editRecord(id) {

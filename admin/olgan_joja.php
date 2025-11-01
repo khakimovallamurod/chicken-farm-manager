@@ -27,7 +27,7 @@ $kataklar = $db->get_data_by_table_all('kataklar');
                 </div>
                 <div class="form-group">
                     <label>O'lgan jo'jalar soni:</label>
-                    <input type="number" id="olgan_soni" required min="1" placeholder="Masalan: 5">
+                    <input type="text" id="olgan_soni" required min="1" placeholder="Masalan: 5">
                 </div>
                 <div class="form-group">
                     <label>Sana:</label>
@@ -77,6 +77,13 @@ $kataklar = $db->get_data_by_table_all('kataklar');
 <script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/sweetalert.min.js"></script>
 <script>
+    const capacityInput_olgan_soni = document.getElementById('olgan_soni');
+    IMask(capacityInput, {
+        mask: Number,
+        min: 0,
+        max: 10000000,
+        thousandsSeparator: ' '
+    });
     const toggleOlganBtn = document.getElementById('toggleOlganViewBtn');
     const olganFormSection = document.getElementById('olganFormSection');
     const olganTableSection = document.getElementById('olganTableSection');

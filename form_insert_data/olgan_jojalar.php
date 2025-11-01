@@ -4,7 +4,7 @@
     $data = json_decode(file_get_contents('php://input'), true);
     header('Content-Type: application/json');
     $katak_id = $data['katak_id'] ?? 0;
-    $soni = $data['soni'] ?? 0;
+    $soni = intval(str_replace(' ', '', $data['soni'])) ?? 0;
     $sana = $data['sana'] ?? '';
     $izoh = $data['izoh'] ?? '';
     $olgan_joja_data = [

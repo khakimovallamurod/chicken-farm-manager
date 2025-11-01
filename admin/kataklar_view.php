@@ -46,7 +46,7 @@
             </div>
             <div class="form-group">
                 <label>Sig'imi (maksimal jo'jalar soni):</label>
-                <input type="number" id="katak_sigimi" required min="1" placeholder="Masalan: 500">
+                <input type="text" id="katak_sigimi" required min="1" placeholder="Masalan: 500">
             </div>
             <div class="form-group">
                 <label>Izoh:</label>
@@ -184,9 +184,17 @@
         </div>
     </div>
 </div>
-
+<script src="https://unpkg.com/imask"></script>
 
 <script>
+    const capacityInput = document.getElementById('katak_sigimi');
+    IMask(capacityInput, {
+        mask: Number,
+        min: 0,
+        max: 1000000,
+        thousandsSeparator: ' '
+    });
+
     // Asosiy funksiyalar
     function addKatak(event) {
         event.preventDefault();        
