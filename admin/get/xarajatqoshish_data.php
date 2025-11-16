@@ -32,6 +32,32 @@
 <script>
     $(document).ready(function() {
         var table_xarajat = $('#harajatlarTable').DataTable({
+            order: [[3, 'desc']],
+            dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCH
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'Harajatlar'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'Harajatlar'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'Harajatlar',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Chop etish',
+                    title: 'Harajatlar'
+                }
+            ],
             language: {
                 "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
                 "zeroRecords": "Hech qanday ma'lumot topilmadi",

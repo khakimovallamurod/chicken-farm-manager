@@ -135,6 +135,47 @@ class Database{
             'kapital_summa' => number_format($kapital_summa ?? 0, 0, '.', ' ')
         ];
     }
+    public function get_joja_summa_monthly($month){
+        $query = "SELECT 
+            SUM(summa) AS oylik_jami_summa
+        FROM joja
+        WHERE MONTH(sana) = $month";
+        $result = mysqli_fetch_assoc($this->query($query));
+        return $result['oylik_jami_summa'] ?? 0;
+    }
+    public function get_yem_berish_summa_monthly($month){
+        $query = "SELECT COALESCE(SUM(miqdori * m.narxi), 0) as yem_summasi FROM `yem_berish` as y
+        INNER JOIN mahsulotlar as m ON y.mahsulot_id = m.id
+        WHERE MONTH(y.sana)= $month;";
+        $result = mysqli_fetch_assoc($this->query($query));
+        return $result['yem_summasi'] ?? 0;
+    }
+    public function get_olgan_joja_summa_monthly($month){
+        $query = "SELECT 
+        COALESCE(SUM(oj.soni * COALESCE(lj.narxi, 0)), 0) AS jami_summa
+        FROM olgan_jojalar oj
+        LEFT JOIN (
+            SELECT j1.katak_id, j1.narxi
+            FROM joja j1
+            JOIN (
+                SELECT katak_id, MAX(id) AS last_id
+                FROM joja
+                GROUP BY katak_id
+            ) j2 ON j1.id = j2.last_id
+        ) lj ON lj.katak_id = oj.katak_id
+        WHERE MONTH(oj.sana) = $month;";
+        $result = mysqli_fetch_assoc($this->query($query));
+        return $result['jami_summa'] ?? 0;
+    }
+    public function get_gosht_soyish_summa_monthly($month){
+        $query = "SELECT
+            COALESCE(SUM(gsm.soni * COALESCE(m.narxi, 0)), 0) AS yem_jami_summa
+        FROM gosht_soyish_mahsulot AS gsm
+        LEFT JOIN mahsulotlar AS m ON m.id = gsm.mahsulot_id
+        WHERE MONTH(gsm.created_at) = $month;";
+        $result = mysqli_fetch_assoc($this->query($query));
+        return $result['yem_jami_summa'] ?? 0;
+    }
 
 }
 ?>

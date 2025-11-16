@@ -61,6 +61,31 @@ $taminotchilar = $db->get_data_by_table_all('taminotchilar', "ORDER BY created_a
             "order": [[0, "asc"]],
             "info": true,      
             "lengthMenu": [5, 10, 25, 50, 100], // ko'rsatish soni
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'Taminotchilar'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'Taminotchilar'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'Taminotchilar',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Chop etish',
+                    title: 'Taminotchilar'
+                }
+            ],
             "language": {
                 "search": "Qidirish:",
                 "lengthMenu": "Har bir sahifada _MENU_ ta",

@@ -49,3 +49,48 @@
         <?php }; ?>
     </tbody>
 </table>
+<script>
+    $(document).ready(function() {
+        var table_pulolish = $('#pulolishTable').DataTable({
+            order: [[3, 'desc']],
+            dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCHU
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'Pul olishlar'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'Pul olishlar'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'Pul olishlar',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Chop etish',
+                    title: 'Pul olishlar'
+                }
+            ],
+            language:{
+                "search": "Qidirish:",
+                "lengthMenu": "Har bir sahifada _MENU_ ta",
+                "info": "Jami _TOTAL_ ta taminotchidan _START_ dan _END_ gacha",
+                "infoEmpty": "Ma’lumot yo‘q",
+                "infoFiltered": "(filtrlangan _MAX_ ta ma’lumotdan)",
+                "paginate": {
+                    "first": "Birinchi",
+                    "last": "Oxirgi",
+                    "next": "Keyingi",
+                    "previous": "Oldingi"
+                },
+            }
+        });
+    });
+</script>

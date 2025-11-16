@@ -50,6 +50,32 @@
 <script>
     $(document).ready(function() {
         var table_kirimadd = $('#kirimTable').DataTable({
+            order: [[4, 'desc']],
+            dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCHU
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'Kirimlar'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'Kirimlar'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'Kirimlar',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Chop etish',
+                    title: 'Kirimlar'
+                }
+            ],
             language: {
                 "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
                 "zeroRecords": "Hech qanday ma'lumot topilmadi",

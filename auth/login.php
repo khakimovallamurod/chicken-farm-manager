@@ -11,17 +11,15 @@
     <h2>Tizimga kirish</h2>
     <form action="tizimga-kirish-tekshir.php" method="post" id="logform">
       <div class="input-box">
-        <input type="text" name="login" placeholder="Enter your username" required>
+        <input type="text" name="login" placeholder="username kiriting" required>
       </div>
       <div class="input-box">
-        <input type="password" name="parol" placeholder="Try password" id="pass" required>
+        <input type="password" name="parol" placeholder="parol kiriting" id="pass" required>
       </div>
       <div class="input-box button">
-        <button type="submit">Sign in</button>
+        <button type="submit">Kirish</button>
       </div>
-      <div class="text">
-        <h3>New to create account? <a href="register.php">Register</a></h3>
-      </div>
+      
     </form>
   </div>
   <script src="../js/jquery-3.6.0.min.js"></script>

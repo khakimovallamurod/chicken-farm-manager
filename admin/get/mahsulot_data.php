@@ -125,6 +125,31 @@
             "order": [[0, "asc"]],
             "info": true,      
             "lengthMenu": [5, 10, 25, 50, 100], // ko'rsatish soni
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'Mahsulotlar'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'Mahsulotlar'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'Mahsulotlar',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Chop etish',
+                    title: 'Mahsulotlar'
+                }
+            ],
             "language": {
                 "search": "Qidirish:",
                 "lengthMenu": "Har bir sahifada _MENU_ ta",

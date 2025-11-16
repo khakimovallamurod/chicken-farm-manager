@@ -34,6 +34,32 @@
 <script>
     $(document).ready(function() {
         var table_yem = $('#yemBerishTable').DataTable({
+            order: [[3, 'desc']],
+            dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCHUN SHAR
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'Yem berish'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'Yem berish'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'Yem berish',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Chop etish',
+                    title: 'Yem berish'
+                }
+            ],
             language: {
                 "lengthMenu": "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",
                 "zeroRecords": "Hech qanday ma'lumot topilmadi",

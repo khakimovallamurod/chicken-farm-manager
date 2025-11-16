@@ -34,9 +34,36 @@
     </tbody>
 </table>
 <script>
+    
     $(document).ready(function () {
         var table_killed = $('#olganJojalarTable').DataTable({
-            order: [[2, 'desc']], 
+            order: [[2, 'desc']],
+            dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCHUN SHART 
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel yuklab olish',
+                    title: 'O\'lgan Jo\'jalar'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV yuklab olish',
+                    title: 'O\'lgan Jo\'jalar'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF yuklab olish',
+                    title: 'O\'lgan Jo\'jalar',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print qilish'
+                    title: 'O\'lgan Jo\'jalar'
+                }
+            ],
+
             language: {
                 search: "Qidiruv:",
                 lengthMenu: "Har sahifada _MENU_ ta yozuv ko‘rsatiladi",

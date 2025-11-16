@@ -41,6 +41,26 @@ $db = new Database();
     $(document).ready(function () {
       var table_joja = $('#qoshilganJojalarTable').DataTable({
           order: [[4, 'desc']], 
+          dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCHUN SHAR
+          buttons: [
+              {
+                  extend: 'excelHtml5',
+                  text: 'Excel yuklab olish',
+                  title: 'Qo\'shilgan Jo\'jalar'
+              },
+              {
+                  extend: 'csvHtml5',
+                  text: 'CSV yuklab olish',
+                  title: 'Qo\'shilgan Jo\'jalar'
+              },
+              {
+                  extend: 'pdfHtml5',
+                  text: 'PDF yuklab olish',
+                  title: 'Qo\'shilgan Jo\'jalar',
+                  orientation: 'landscape',
+                  pageSize: 'A4'
+              },
+          ],
           language: {
               search: "Qidiruv:",
               lengthMenu: "Har sahifada _MENU_ ta yozuv ko‘rsatilsin",

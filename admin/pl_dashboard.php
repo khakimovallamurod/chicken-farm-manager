@@ -1,3 +1,43 @@
+<?php
+    include_once '../config.php';
+    $db = new Database();
+    $gosht_list = [];
+    $olgan_joja_list = [];
+    $yem_list = [];
+    $joja_list = [];
+    $profit_list = [];
+
+    $all_gosht_summa = 0;
+    $all_olgan_joja_summa = 0;
+    $all_yem_summa = 0;
+    $all_joja_summa = 0;
+    $all_profit = 0;
+
+    foreach(range(1,12) as $month){
+
+        $gosht = $db->get_gosht_soyish_summa_monthly($month) ?? 0;
+        $olgan = $db->get_olgan_joja_summa_monthly($month) ?? 0;
+        $yem   = $db->get_yem_berish_summa_monthly($month) ?? 0;
+        $joja  = $db->get_joja_summa_monthly($month) ?? 0;
+
+        $profit = $gosht - $olgan - $yem - $joja;
+
+        // Oyning qiymatlarini massivga yozib boramiz
+        $gosht_list[] = $gosht;
+        $olgan_joja_list[] = $olgan;
+        $yem_list[] = $yem;
+        $joja_list[] = $joja;
+        $profit_list[] = $profit;
+
+        // Umumiy summalar
+        $all_gosht_summa += $gosht;
+        $all_olgan_joja_summa += $olgan;
+        $all_yem_summa += $yem;
+        $all_joja_summa += $joja;
+        $all_profit += $profit;
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -7,7 +47,6 @@
     <style>
         
         .header-section::before {
-            content: '🐓';
             position: absolute;
             top: 20px;
             left: 40px;
@@ -313,7 +352,7 @@
         </div>
         
         <div class="table-container">
-            <table class="financial-table">
+            <table class="financial-table" id="financialReportTable">
                 <thead>
                     <tr>
                         <th>Ko'rsatkichlar</th>
@@ -334,184 +373,83 @@
                 </thead>
                 <tbody>
                     <tr class="revenue-row">
-                        <td class="icon-money"><b>💰 Sotuvdan tushum (brutto)</b></td>
-                        <td class="number">45,750,000</td>
-                        <td class="number">42,300,000</td>
-                        <td class="number">48,200,000</td>
-                        <td class="number">51,600,000</td>
-                        <td class="number">49,800,000</td>
-                        <td class="number">47,900,000</td>
-                        <td class="number">52,100,000</td>
-                        <td class="number">50,400,000</td>
-                        <td class="number">46,700,000</td>
-                        <td class="number">44,900,000</td>
-                        <td class="number">43,200,000</td>
-                        <td class="number">41,800,000</td>
-                        <td class="number highlight-positive">574,650,000</td>
+                        <td><b>Go'sht so'yish summasi</b></td>
+                        <?php foreach($gosht_list as $v): ?>
+                            <td class="number"><?= number_format($v, 0, '.', ' ') ?></td>
+                        <?php endforeach; ?>
+                        <td class="number"><?= number_format($all_gosht_summa, 0, '.', ' ') ?></td>
                     </tr>
                     <tr class="sub-item">
-                        <td class="icon-egg">🥚 Tuxum sotuvidan daromad</td>
-                        <td class="number">28,450,000</td>
-                        <td class="number">26,590,000</td>
-                        <td class="number">30,125,000</td>
-                        <td class="number">32,250,000</td>
-                        <td class="number">31,175,000</td>
-                        <td class="number">29,935,000</td>
-                        <td class="number">32,565,000</td>
-                        <td class="number">31,500,000</td>
-                        <td class="number">29,238,000</td>
-                        <td class="number">28,063,000</td>
-                        <td class="number">27,000,000</td>
-                        <td class="number">26,145,000</td>
-                        <td class="number">353,036,000</td>
+                        <td>O'lgan jo'ja summasi</td>
+                        <?php foreach($olgan_joja_list as $v): ?>
+                            <td class="number"><?= number_format($v, 0, '.', ' ') ?></td>
+                        <?php endforeach; ?>
+                        <td class="number"><?= number_format($all_olgan_joja_summa, 0, '.', ' ') ?></td>
                     </tr>
+
                     <tr class="sub-item">
-                        <td class="icon-chicken">🐓 Tovuq sotuvidan daromad</td>
-                        <td class="number">17,300,000</td>
-                        <td class="number">15,710,000</td>
-                        <td class="number">18,075,000</td>
-                        <td class="number">19,350,000</td>
-                        <td class="number">18,625,000</td>
-                        <td class="number">17,965,000</td>
-                        <td class="number">19,535,000</td>
-                        <td class="number">18,900,000</td>
-                        <td class="number">17,462,000</td>
-                        <td class="number">16,837,000</td>
-                        <td class="number">16,200,000</td>
-                        <td class="number">15,655,000</td>
-                        <td class="number">211,614,000</td>
-                    </tr>
-                    <tr class="revenue-row">
-                        <td class="icon-chart"><b>📈 Sof tushum</b></td>
-                        <td class="number">41,175,000</td>
-                        <td class="number">38,070,000</td>
-                        <td class="number">43,380,000</td>
-                        <td class="number">46,440,000</td>
-                        <td class="number">44,820,000</td>
-                        <td class="number">43,110,000</td>
-                        <td class="number">46,890,000</td>
-                        <td class="number">45,360,000</td>
-                        <td class="number">42,030,000</td>
-                        <td class="number">40,410,000</td>
-                        <td class="number">38,880,000</td>
-                        <td class="number">37,620,000</td>
-                        <td class="number highlight-positive">518,185,000</td>
+                        <td>Yem berish summasi</td>
+                        <?php foreach($yem_list as $v): ?>
+                            <td class="number"><?= number_format($v, 0, '.', ' ') ?></td>
+                        <?php endforeach; ?>
+                        <td class="number"><?= number_format($all_yem_summa, 0, '.', ' ') ?></td>
                     </tr>
                     <tr class="expense-row">
-                        <td class="icon-feed"><b>🌾 Yem xarajatlari</b></td>
-                        <td class="number">18,500,000</td>
-                        <td class="number">17,200,000</td>
-                        <td class="number">19,300,000</td>
-                        <td class="number">20,800,000</td>
-                        <td class="number">20,100,000</td>
-                        <td class="number">19,400,000</td>
-                        <td class="number">21,200,000</td>
-                        <td class="number">20,600,000</td>
-                        <td class="number">19,000,000</td>
-                        <td class="number">18,200,000</td>
-                        <td class="number">17,500,000</td>
-                        <td class="number">16,900,000</td>
-                        <td class="number">228,700,000</td>
-                    </tr>
-                    <tr class="expense-row">
-                        <td class="icon-medicine"><b>💊 Veterinar xarajatlari</b></td>
-                        <td class="number">2,300,000</td>
-                        <td class="number">2,150,000</td>
-                        <td class="number">2,450,000</td>
-                        <td class="number">2,600,000</td>
-                        <td class="number">2,500,000</td>
-                        <td class="number">2,400,000</td>
-                        <td class="number">2,650,000</td>
-                        <td class="number">2,550,000</td>
-                        <td class="number">2,350,000</td>
-                        <td class="number">2,250,000</td>
-                        <td class="number">2,150,000</td>
-                        <td class="number">2,100,000</td>
-                        <td class="number">28,450,000</td>
-                    </tr>
-                    <tr class="expense-row">
-                        <td><b>⚡ Kommunal xarajatlar</b></td>
-                        <td class="number">3,200,000</td>
-                        <td class="number">2,980,000</td>
-                        <td class="number">3,350,000</td>
-                        <td class="number">3,580,000</td>
-                        <td class="number">3,450,000</td>
-                        <td class="number">3,320,000</td>
-                        <td class="number">3,650,000</td>
-                        <td class="number">3,520,000</td>
-                        <td class="number">3,250,000</td>
-                        <td class="number">3,100,000</td>
-                        <td class="number">2,980,000</td>
-                        <td class="number">2,900,000</td>
-                        <td class="number">39,280,000</td>
-                    </tr>
-                    <tr class="expense-row">
-                        <td><b>👥 Ish haqi</b></td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">8,500,000</td>
-                        <td class="number">102,000,000</td>
-                    </tr>
-                    <tr class="expense-row">
-                        <td><b>🔧 Boshqa operatsion xarajatlar</b></td>
-                        <td class="number">1,800,000</td>
-                        <td class="number">1,650,000</td>
-                        <td class="number">1,850,000</td>
-                        <td class="number">1,980,000</td>
-                        <td class="number">1,920,000</td>
-                        <td class="number">1,850,000</td>
-                        <td class="number">2,020,000</td>
-                        <td class="number">1,950,000</td>
-                        <td class="number">1,800,000</td>
-                        <td class="number">1,720,000</td>
-                        <td class="number">1,650,000</td>
-                        <td class="number">1,600,000</td>
-                        <td class="number">21,790,000</td>
+                        <td><b>Joja sotib olish summasi</b></td>
+                        <?php foreach($joja_list as $v): ?>
+                            <td class="number"><?= number_format($v, 0, '.', ' ') ?></td>
+                        <?php endforeach; ?>
+                        <td class="number"><?= number_format($all_joja_summa, 0, '.', ' ') ?></td>
                     </tr>
                     <tr class="profit-row">
-                        <td class="icon-money"><b>💵 Operatsion foyda (EBITDA)</b></td>
-                        <td class="number highlight-positive">6,875,000</td>
-                        <td class="number highlight-positive">5,590,000</td>
-                        <td class="number highlight-positive">7,930,000</td>
-                        <td class="number highlight-positive">8,980,000</td>
-                        <td class="number highlight-positive">8,350,000</td>
-                        <td class="number highlight-positive">7,640,000</td>
-                        <td class="number highlight-positive">8,870,000</td>
-                        <td class="number highlight-positive">8,240,000</td>
-                        <td class="number highlight-positive">7,330,000</td>
-                        <td class="number highlight-positive">6,640,000</td>
-                        <td class="number highlight-positive">6,100,000</td>
-                        <td class="number highlight-positive">5,720,000</td>
-                        <td class="number highlight-positive">97,965,000</td>
+                        <td><b>Sof foyda</b></td>
+                        <?php foreach($profit_list as $v): ?>
+                            <td class="number <?= $v >= 0 ? 'highlight-positive' : 'highlight-negative' ?>">
+                                <?= number_format($v, 0, '.', ' ') ?>
+                            </td>
+                        <?php endforeach; ?>
+                        <td class="number"><?= number_format($all_profit, 0, '.', ' ') ?></td>
                     </tr>
-                    <tr class="profit-row">
-                        <td class="icon-chart"><b>💎 Sof foyda</b></td>
-                        <td class="number highlight-positive">5,500,000</td>
-                        <td class="number highlight-positive">4,472,000</td>
-                        <td class="number highlight-positive">6,344,000</td>
-                        <td class="number highlight-positive">7,184,000</td>
-                        <td class="number highlight-positive">6,680,000</td>
-                        <td class="number highlight-positive">6,112,000</td>
-                        <td class="number highlight-positive">7,096,000</td>
-                        <td class="number highlight-positive">6,592,000</td>
-                        <td class="number highlight-positive">5,864,000</td>
-                        <td class="number highlight-positive">5,312,000</td>
-                        <td class="number highlight-positive">4,880,000</td>
-                        <td class="number highlight-positive">4,576,000</td>
-                        <td class="number highlight-positive">70,612,000</td>
-                    </tr>
+
                 </tbody>
             </table>
         </div>
     </section>
+    <script>
+        // // 🔥 EXPORT BUTTONLAR UCHU
+        $(document).ready(function() {
+            $('#financialReportTable').DataTable({
+                "paging": false,        
+                "searching": false,     
+                "ordering": false,      
+                "info": false,      
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel yuklab olish',
+                        title: 'Tovuq Firmasi - Daromad va Xarajatlar Hisoboti'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV yuklab olish',
+                        title: 'Tovuq Firmasi - Daromad va Xarajatlar Hisoboti'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF yuklab olish',
+                        title: 'Tovuq Firmasi - Daromad va Xarajatlar Hisoboti',
+                        orientation: 'landscape',
+                        pageSize: 'A4'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Chop etish',
+                        title: 'Tovuq Firmasi - Daromad va Xarajatlar Hisoboti'
+                    }
+                ],
+            });
+        });
+    </script>
 </body>
 </html>

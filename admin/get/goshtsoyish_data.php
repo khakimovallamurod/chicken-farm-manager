@@ -60,6 +60,30 @@
             var table_meal = $('#topshirishlarTable').DataTable({
                 responsive: true,
                 order: [[2, 'desc']], 
+                dom: 'Bfrtip',   // 🔥 EXPORT BUTTONLAR UCHUN SHAR
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel yuklab olish',
+                        title: 'Go\'sht topshirishlar'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV yuklab olish',
+                        title: 'Go\'sht topshirishlar'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF yuklab olish',
+                        title: 'Go\'sht topshirishlar',
+                        orientation: 'landscape',
+                        pageSize: 'A4'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Print qilish'
+                    }
+                ],
                 language: {
                     search: "Qidiruv:",
                     lengthMenu: "Har sahifada _MENU_ ta yozuv",
