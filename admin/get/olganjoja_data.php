@@ -59,7 +59,7 @@
                 },
                 {
                     extend: 'print',
-                    text: 'Print qilish'
+                    text: 'Print qilish',
                     title: 'O\'lgan Jo\'jalar'
                 }
             ],

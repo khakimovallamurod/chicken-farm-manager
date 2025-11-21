@@ -81,12 +81,26 @@
                 </div>
             </div>
             <div class="table-responsive">
+                <div class="col-md-4 mb-3">
+                    <button id="deleteAllGoshtSoyishBtn" class="btn-professional btn-danger">🗑️ Barcha go'sht so'yishlarni o'chirish</button>
+                </div>
                 <div id='goshtsoyishcn'>
-
                 </div>
             </div>
         </div>
     </section>
+    <div id="deleteAllGoshtSoyishModal" class="modal">
+        <div class="modal-content" style="width: 500px; max-width: 90%; margin-top: 20%; ">
+            <h3>Barcha go'sht so'yishlarni o'chirish</h3>
+            <div id="deleteAllGoshtSoyishContent">
+                <p>Diqqat! Bu amal barcha go'sht so'yish yozuvlarini o'chiradi va qaytarib bo'lmaydi. Davom etmoqchimisiz?</p>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-danger" id="confirmDeleteAllGoshtSoyishBtn">Ha, o'chirish</button>
+                    <button class="btn btn-secondary" onclick="closeModal('deleteAllGoshtSoyishModal')">Bekor qilish</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="historyModal" class="modal">
         <div class="modal-content">
@@ -154,6 +168,14 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
     <script>
+        document.getElementById("deleteAllGoshtSoyishBtn").addEventListener("click", function() {
+            document.getElementById("deleteAllGoshtSoyishModal").style.display = "block";
+        });
+        document.getElementById("confirmDeleteAllGoshtSoyishBtn").addEventListener("click", function () {
+            deleteAllGoshtSoyish();
+            closeModal("deleteAllGoshtSoyishModal");
+        });
+
         const capacityInput_gosht_soni = document.getElementById('gosht_soni');
         IMask(capacityInput_gosht_soni, {
             mask: Number,
@@ -529,7 +551,54 @@
                 addProductForRowModal.classList.remove('show');
             }
         }
-
+        function deleteGoshtSoyish(id) {
+            swal({
+                title: "❗ Tasdiqlash",
+                text: "Bu yozuvni o'chirmoqchimisiz?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: 'delete/delete_gosht_soyish.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: { id: id },
+                        success: function(response) {
+                            if (response.success) {
+                                showAlert("✅ Yozuv muvaffaqiyatli o'chirildi!", "success");
+                                loadGoshtSoyish();
+                            } else {
+                                showAlert("❗ Xatolik: " + (response.message || "Yozuv o'chirilmadi"), "error");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            swal("❌ Server xatosi", "Iltimos qayta urinib ko‘ring", "error");
+                        }
+                    });
+                }
+            });
+        }
+        function deleteAllGoshtSoyish() {
+            $.ajax({
+                url: 'delete/delete_all_gosht_soyish.php',
+                type: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        showAlert("✅ Barcha yozuvlar muvaffaqiyatli o'chirildi!", "success");
+                        loadGoshtSoyish();
+                    } else {
+                        showAlert("❗ Xatolik: " + (response.message || "Yozuvlar o'chirilmadi"), "error");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    swal("❌ Server xatosi", "Iltimos qayta urinib ko‘ring", "error");
+                }
+            });
+        }
         // Sahifa yuklanganda bugungi sanani o'rnatish
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];

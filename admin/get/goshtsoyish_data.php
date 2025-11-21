@@ -13,13 +13,14 @@
             <th><i class="fas fa-comment me-1"></i>Izoh</th>
             <th><i class="fas fa-eye me-1"></i>Ko'rish</th>
             <th><i class="fas fa-plus me-1"></i>Qo'shish</th>
+            <th><i class="fas fe-remove me-1"></i>O'chirish</th>
         </tr>
     </thead>
     <tbody id="goshtTopshirishTable">
         <?php foreach ($gosht_soyishlar as $soyish): 
             $katak_id = $soyish['katak_id'];
             $kataklar = $db->get_data_by_table('kataklar', ['id' => $katak_id]);
-            $katak_name = $kataklar['katak_nomi'];
+            $katak_name = $kataklar['katak_nomi'] ?? "O'chirilgan";
         ?>
         <tr id="<?= $soyish['id'] ?>">
             <td>
@@ -49,6 +50,11 @@
             <td>
                 <button class="btn btn-sm btn-outline-primary" title="Qo'shish" onclick="showAddProductForRow(<?= $soyish['id'] ?>)">
                     ➕
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline-danger" title="O'chirish" onclick="deleteGoshtSoyish(<?= $soyish['id'] ?>)">
+                    ❌
                 </button>
             </td>
         </tr>

@@ -6,7 +6,7 @@
     $katak_id = $data['katak_id'] ?? 0;
     $sana = $data['sana'] ?? '';
     $yem_turi = $data['yem_turi'] ?? '';
-    $yem_miqdori = int_val(str_replace(' ', '', $data['miqdori'])) ?? 0;
+    $yem_miqdori = intval(str_replace(' ', '', $data['miqdori'])) ?? 0;
     $izoh = $data['izoh'] ?? '';
     $yem_data = [
         'katak_id' => $katak_id,
